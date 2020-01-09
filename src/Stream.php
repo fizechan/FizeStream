@@ -1,10 +1,12 @@
 <?php
 
 
-namespace fize\net;
+namespace fize\stream;
 
+use Iterator;
 use Exception;
 use RuntimeException;
+use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use fize\io\Stream as StreamIO;
 use fize\io\File;
@@ -239,6 +241,7 @@ class Stream implements StreamInterface
 
     /**
      * 返回流是否可写
+     * @return bool
      */
     public function isWritable()
     {
@@ -343,5 +346,124 @@ class Stream implements StreamInterface
 
         $meta = $this->stream->getMetaData();
         return isset($meta[$key]) ? $meta[$key] : null;
+    }
+
+    /**
+     * 创建流
+     * @param mixed $resource 资源
+     * @param array $options 选项
+     * @return StreamInterface
+     */
+    public static function create($resource = '', array $options = [])
+    {
+        if (is_scalar($resource)) {
+            $file = new File('php://temp', 'r+');
+            if ($resource !== '') {
+                $file->write($resource);
+                $file->seek(0);
+            }
+            $stream = new StreamIO($file->getStream());
+            return new Stream($stream, $options);
+        }
+
+        if (is_null($resource)) {
+            $file = new File('php://temp', 'r+');
+            $stream = new StreamIO($file->getStream());
+            return new Stream($stream, $options);
+        }
+
+        if (is_resource($resource)) {
+            $stream = new StreamIO($resource);
+            return new Stream($stream, $options);
+        }
+
+        if ($resource instanceof StreamInterface) {
+            return $resource;
+        }
+
+        if ($resource instanceof Iterator) {
+            return new PumpStream(function () use ($resource) {
+                if (!$resource->valid()) {
+                    return false;
+                }
+                $result = $resource->current();
+                $resource->next();
+                return $result;
+            }, $options);
+        }
+
+        if (is_object($resource) && method_exists($resource, '__toString')) {
+            return self::create((string)$resource, $options);
+        }
+
+        if (is_callable($resource)) {
+            return new PumpStream($resource, $options);
+        }
+
+        throw new InvalidArgumentException('Invalid resource type: ' . gettype($resource));
+    }
+
+    /**
+     * 将流复制为字符串
+     * @param StreamInterface $stream 流
+     * @param int $maxLen 最长字节数，-1表示不限制
+     * @return string
+     */
+    public static function copyToString(StreamInterface $stream, $maxLen = -1)
+    {
+        $buffer = '';
+
+        if ($maxLen === -1) {
+            while (!$stream->eof()) {
+                $buf = $stream->read(1048576);
+                if ($buf == null) {
+                    break;
+                }
+                $buffer .= $buf;
+            }
+            return $buffer;
+        }
+
+        $len = 0;
+        while (!$stream->eof() && $len < $maxLen) {
+            $buf = $stream->read($maxLen - $len);
+            if ($buf == null) {
+                break;
+            }
+            $buffer .= $buf;
+            $len = strlen($buffer);
+        }
+
+        return $buffer;
+    }
+
+    /**
+     * 将一个流的内容复制到另一个流中
+     * @param StreamInterface $source 源
+     * @param StreamInterface $dest 目标
+     * @param int $maxLen 直到指定的数字为止字节已被读取
+     */
+    public static function copyToStream(StreamInterface $source, StreamInterface $dest, $maxLen = -1)
+    {
+        $bufferSize = 8192;
+
+        if ($maxLen === -1) {
+            while (!$source->eof()) {
+                if (!$dest->write($source->read($bufferSize))) {
+                    break;
+                }
+            }
+        } else {
+            $remaining = $maxLen;
+            while ($remaining > 0 && !$source->eof()) {
+                $buf = $source->read(min($bufferSize, $remaining));
+                $len = strlen($buf);
+                if (!$len) {
+                    break;
+                }
+                $remaining -= $len;
+                $dest->write($buf);
+            }
+        }
     }
 }
