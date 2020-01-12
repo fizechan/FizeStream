@@ -29,17 +29,12 @@ class Stream implements StreamInterface
     const WRITABLE_MODES = '/a|w|r\+|rb\+|rw|x|c/';
 
     /**
-     * @var StreamIO|null 流对象
+     * @var StreamIO 流对象
      */
     protected $stream;
 
     /**
-     * @var File 流文件对象
-     */
-    protected $file;
-
-    /**
-     * @var int|null 流的数据大小
+     * @var int 流的数据大小
      */
     protected $size;
 
@@ -70,13 +65,21 @@ class Stream implements StreamInterface
 
     /**
      * 构造
-     * @param StreamIO $stream 流对象
+     * @param StreamIO|File|resource $stream 流对象、文件对象、流
      * @param array $options 附加选项
      */
-    public function __construct(StreamIO $stream, array $options = [])
+    public function __construct($stream, array $options = [])
     {
+        if (is_resource($stream)) {
+            $stream = new StreamIO($stream);
+        }
+        if ($stream instanceof File) {
+            if (!is_resource($stream->getStream())) {
+                $stream->open();
+            }
+            $stream = new StreamIO($stream->getStream());
+        }
         $this->stream = $stream;
-        $this->file = new File($this->stream->get());
         if (isset($options['size'])) {
             $this->size = $options['size'];
         }
@@ -116,7 +119,6 @@ class Stream implements StreamInterface
     public function close()
     {
         if (isset($this->stream)) {
-            $this->file = null;
             $this->stream = null;
             $this->detach();
         }
@@ -134,8 +136,7 @@ class Stream implements StreamInterface
             return null;
         }
 
-        $result = $this->stream->get();
-        unset($this->file);
+        $result = $this->stream->getResource();
         unset($this->stream);
         $this->size = $this->uri = null;
         $this->readable = $this->writable = $this->seekable = false;
@@ -155,7 +156,7 @@ class Stream implements StreamInterface
             return $this->size;
         }
 
-        if (!isset($this->file)) {
+        if (!isset($this->stream)) {
             return null;
         }
 
@@ -163,7 +164,7 @@ class Stream implements StreamInterface
             clearstatcache(true, $this->uri);
         }
 
-        $stats = $this->file->stat();
+        $stats = $this->stream->getFile()->stat();
         if (isset($stats['size'])) {
             $this->size = $stats['size'];
             return $this->size;
@@ -178,11 +179,11 @@ class Stream implements StreamInterface
      */
     public function tell()
     {
-        if (!isset($this->file)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
 
-        $result = $this->file->tell();
+        $result = $this->stream->getFile()->tell();
 
         if ($result === false) {
             throw new RuntimeException('Unable to determine stream position');
@@ -197,11 +198,11 @@ class Stream implements StreamInterface
      */
     public function eof()
     {
-        if (!isset($this->file)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
 
-        return $this->file->eof();
+        return $this->stream->getFile()->eof();
     }
 
     /**
@@ -220,13 +221,13 @@ class Stream implements StreamInterface
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        if (!isset($this->file)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->seekable) {
             throw new RuntimeException('Stream is not seekable');
         }
-        if ($this->file->seek($offset, $whence) === -1) {
+        if ($this->stream->getFile()->seek($offset, $whence) === -1) {
             throw new RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . var_export($whence, true));
         }
     }
@@ -255,7 +256,7 @@ class Stream implements StreamInterface
      */
     public function write($string)
     {
-        if (!isset($this->file)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->writable) {
@@ -263,7 +264,7 @@ class Stream implements StreamInterface
         }
 
         $this->size = null;  //数据大小无法得知
-        $result = $this->file->write($string);
+        $result = $this->stream->getFile()->write($string);
 
         if ($result === false) {
             throw new RuntimeException('Unable to write to stream');
@@ -288,7 +289,7 @@ class Stream implements StreamInterface
      */
     public function read($length)
     {
-        if (!isset($this->file)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->readable) {
@@ -302,7 +303,7 @@ class Stream implements StreamInterface
             return '';
         }
 
-        $string = $this->file->read($length);
+        $string = $this->stream->getFile()->read($length);
         if (false === $string) {
             throw new RuntimeException('Unable to read from stream');
         }
