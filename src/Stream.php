@@ -34,6 +34,11 @@ class Stream implements StreamInterface
     protected $stream;
 
     /**
+     * @var File 文件对象
+     */
+    protected $file;
+
+    /**
      * @var int 流的数据大小
      */
     protected $size;
@@ -72,9 +77,12 @@ class Stream implements StreamInterface
     {
         if (is_resource($stream)) {
             $stream = new StreamIO($stream);
+            $this->file = $stream->getFile();
         }
         if ($stream instanceof File) {
-            if (!is_resource($stream->getStream())) {
+            $this->file = $stream;
+            $resource = $stream->getStream();
+            if (!is_resource($resource) || get_resource_type($resource) == 'Unknown') {
                 $stream->open();
             }
             $stream = new StreamIO($stream->getStream());
@@ -120,6 +128,7 @@ class Stream implements StreamInterface
     {
         if (isset($this->stream)) {
             $this->stream = null;
+            $this->file = null;
             $this->detach();
         }
     }
@@ -164,7 +173,7 @@ class Stream implements StreamInterface
             clearstatcache(true, $this->uri);
         }
 
-        $stats = $this->stream->getFile()->stat();
+        $stats = $this->file->stat();
         if (isset($stats['size'])) {
             $this->size = $stats['size'];
             return $this->size;
@@ -183,7 +192,7 @@ class Stream implements StreamInterface
             throw new RuntimeException('Stream is detached');
         }
 
-        $result = $this->stream->getFile()->tell();
+        $result = $this->file->tell();
 
         if ($result === false) {
             throw new RuntimeException('Unable to determine stream position');
@@ -202,7 +211,7 @@ class Stream implements StreamInterface
             throw new RuntimeException('Stream is detached');
         }
 
-        return $this->stream->getFile()->eof();
+        return $this->file->eof();
     }
 
     /**
@@ -227,7 +236,7 @@ class Stream implements StreamInterface
         if (!$this->seekable) {
             throw new RuntimeException('Stream is not seekable');
         }
-        if ($this->stream->getFile()->seek($offset, $whence) === -1) {
+        if ($this->file->seek($offset, $whence) === -1) {
             throw new RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . var_export($whence, true));
         }
     }
@@ -264,7 +273,7 @@ class Stream implements StreamInterface
         }
 
         $this->size = null;  //数据大小无法得知
-        $result = $this->stream->getFile()->write($string);
+        $result = $this->file->write($string);
 
         if ($result === false) {
             throw new RuntimeException('Unable to write to stream');
@@ -303,7 +312,7 @@ class Stream implements StreamInterface
             return '';
         }
 
-        $string = $this->stream->getFile()->read($length);
+        $string = $this->file->read($length);
         if (false === $string) {
             throw new RuntimeException('Unable to read from stream');
         }
@@ -344,7 +353,6 @@ class Stream implements StreamInterface
         } elseif (isset($this->customMetadata[$key])) {
             return $this->customMetadata[$key];
         }
-
         $meta = $this->stream->getMetaData();
         return isset($meta[$key]) ? $meta[$key] : null;
     }
@@ -363,19 +371,20 @@ class Stream implements StreamInterface
                 $file->write($resource);
                 $file->seek(0);
             }
-            $stream = new StreamIO($file->getStream());
-            return new Stream($stream, $options);
+            return new Stream($file, $options);
         }
 
         if (is_null($resource)) {
             $file = new File('php://temp', 'r+');
-            $stream = new StreamIO($file->getStream());
-            return new Stream($stream, $options);
+            return new Stream($file->getStream(), $options);
+        }
+
+        if ($resource instanceof File) {
+            return new Stream($resource, $options);
         }
 
         if (is_resource($resource)) {
-            $stream = new StreamIO($resource);
-            return new Stream($stream, $options);
+            return new Stream($resource, $options);
         }
 
         if ($resource instanceof StreamInterface) {
