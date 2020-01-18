@@ -1,15 +1,23 @@
 <?php
 
-
-namespace fize\stream;
+namespace fize\stream\realization;
 
 use Psr\Http\Message\StreamInterface;
 use fize\io\Stream as StreamIO;
+use fize\stream\StreamDecorator;
+use fize\stream\StreamWrapper;
+use fize\stream\Stream;
 
-
+/**
+ * 解压流
+ */
 class InflateStream extends StreamDecorator implements StreamInterface
 {
 
+    /**
+     * 构造
+     * @param StreamInterface $stream 流对象
+     */
     public function __construct(StreamInterface $stream)
     {
         // read the first 10 bytes, ie. gzip header
@@ -23,8 +31,9 @@ class InflateStream extends StreamDecorator implements StreamInterface
     }
 
     /**
-     * @param StreamInterface $stream
-     * @param $header
+     * 获取文件头长度
+     * @param StreamInterface $stream 流对象
+     * @param string $header 文件头
      * @return int
      */
     private function getLengthOfPossibleFilenameHeader(StreamInterface $stream, $header)
@@ -32,7 +41,6 @@ class InflateStream extends StreamDecorator implements StreamInterface
         $filename_header_length = 0;
 
         if (substr(bin2hex($header), 6, 2) === '08') {
-            // we have a filename, read until nil
             $filename_header_length = 1;
             while ($stream->read(1) !== chr(0)) {
                 $filename_header_length++;

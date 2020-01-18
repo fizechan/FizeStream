@@ -1,9 +1,10 @@
 <?php
 
 
-namespace fize\stream;
+namespace fize\stream\realization;
 
 use Psr\Http\Message\StreamInterface;
+use fize\stream\StreamDecorator;
 
 /**
  * 丢弃流

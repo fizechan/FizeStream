@@ -1,11 +1,17 @@
 <?php
 
 
-namespace fize\stream;
+namespace fize\stream\realization;
 
 use LogicException;
 use Psr\Http\Message\StreamInterface;
+use fize\stream\StreamDecorator;
 
+/**
+ * 方法流
+ *
+ * 根据传递的一些列方法定义一个流
+ */
 class FnStream extends StreamDecorator implements StreamInterface
 {
 
@@ -43,7 +49,7 @@ class FnStream extends StreamDecorator implements StreamInterface
     }
 
     /**
-     * 模仿方法：序列化
+     * 魔法方法：序列化
      */
     public function __wakeup()
     {

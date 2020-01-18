@@ -1,7 +1,7 @@
 <?php
 
 
-namespace fize\stream;
+namespace fize\stream\realization;
 
 use RuntimeException;
 use Psr\Http\Message\StreamInterface;

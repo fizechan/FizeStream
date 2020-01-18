@@ -1,11 +1,13 @@
 <?php
 
 
-namespace fize\stream;
+namespace fize\stream\realization;
 
 
-use fize\io\File;
 use Psr\Http\Message\StreamInterface;
+use fize\io\File;
+use fize\stream\StreamDecorator;
+use fize\stream\Stream;
 
 /**
  * 惰性流

@@ -1,11 +1,12 @@
 <?php
 
 
-namespace fize\stream;
+namespace fize\stream\realization;
 
 use Exception;
 use RuntimeException;
 use Psr\Http\Message\StreamInterface;
+use fize\stream\Stream;
 
 /**
  * PHP 数据流

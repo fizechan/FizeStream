@@ -1,25 +1,30 @@
 <?php
 
 
-namespace fize\stream;
+namespace fize\stream\realization;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
+use fize\stream\StreamDecorator;
+use fize\stream\Stream;
 
-
+/**
+ * 多组件流
+ *
+ * 该流可用于 POST 提交数据
+ */
 class MultipartStream extends StreamDecorator implements StreamInterface
 {
+
+    /**
+     * @var string 边界分隔符
+     */
     private $boundary;
 
     /**
-     * @param array $elements Array of associative arrays, each containing a
-     *                         required "name" key mapping to the form field,
-     *                         name, a required "contents" key mapping to a
-     *                         StreamInterface/resource/string, an optional
-     *                         "headers" associative array of custom headers,
-     *                         and an optional "filename" key mapping to a
-     *                         string to send as the filename in the part.
-     * @param string $boundary You can optionally provide a specific boundary
+     * 构造
+     * @param array $elements 组件
+     * @param string $boundary 边界分隔符
      */
     public function __construct(array $elements = [], $boundary = null)
     {
@@ -28,8 +33,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
     }
 
     /**
-     * Get the boundary
-     *
+     * 获取边界分隔符
      * @return string
      */
     public function getBoundary()
@@ -37,29 +41,18 @@ class MultipartStream extends StreamDecorator implements StreamInterface
         return $this->boundary;
     }
 
+    /**
+     * 返回流是否可写
+     * @return bool
+     */
     public function isWritable()
     {
         return false;
     }
 
     /**
-     * Get the headers needed before transferring the content of a POST file
-     * @param array $headers
-     * @return string
-     */
-    private function getHeaders(array $headers)
-    {
-        $str = '';
-        foreach ($headers as $key => $value) {
-            $str .= "{$key}: {$value}\r\n";
-        }
-
-        return "--{$this->boundary}\r\n" . trim($str) . "\r\n\r\n";
-    }
-
-    /**
-     * Create the aggregate stream that will be used to upload the POST data
-     * @param array $elements
+     * 创建用于上传POST数据的聚合流
+     * @param array $elements 各组件
      * @return StreamInterface
      */
     protected function createStream(array $elements)
@@ -76,6 +69,11 @@ class MultipartStream extends StreamDecorator implements StreamInterface
         return $stream;
     }
 
+    /**
+     * 添加组件
+     * @param AppendStream $stream 组件流对象
+     * @param array $element 对象属性
+     */
     private function addElement(AppendStream $stream, array $element)
     {
         foreach (['contents', 'name'] as $key) {
@@ -106,27 +104,27 @@ class MultipartStream extends StreamDecorator implements StreamInterface
     }
 
     /**
-     * @param $name
-     * @param StreamInterface $stream
-     * @param $filename
-     * @param array $headers
-     * @return array
-     * @return array
+     * 创建组件
+     * @param string $name 名称
+     * @param StreamInterface $stream 流对象
+     * @param string $filename 文件名
+     * @param array $headers 头信息
+     * @return array [$stream, $headers]
      */
     private function createElement($name, StreamInterface $stream, $filename, array $headers)
     {
         // Set a default content-disposition header if one was no provided
-        $disposition = $this->getHeader($headers, 'content-disposition');
+        $disposition = self::getHeader($headers, 'content-disposition');
         if (!$disposition) {
-            $headers['Content-Disposition'] = ($filename === '0' || $filename)
-                ? sprintf('form-data; name="%s"; filename="%s"',
-                    $name,
-                    basename($filename))
-                : "form-data; name=\"{$name}\"";
+            if ($filename === '0' || $filename) {
+                $headers['Content-Disposition'] = sprintf('form-data; name="%s"; filename="%s"', $name, basename($filename));
+            } else {
+                $headers['Content-Disposition'] = "form-data; name=\"{$name}\"";
+            }
         }
 
         // Set a default content-length header if one was no provided
-        $length = $this->getHeader($headers, 'content-length');
+        $length = self::getHeader($headers, 'content-length');
         if (!$length) {
             if ($length = $stream->getSize()) {
                 $headers['Content-Length'] = (string)$length;
@@ -134,7 +132,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
         }
 
         // Set a default Content-Type if one was not supplied
-        $type = $this->getHeader($headers, 'content-type');
+        $type = self::getHeader($headers, 'content-type');
         if (!$type && ($filename === '0' || $filename)) {
             if ($type = self::mimetypeFromFilename($filename)) {
                 $headers['Content-Type'] = $type;
@@ -144,7 +142,13 @@ class MultipartStream extends StreamDecorator implements StreamInterface
         return [$stream, $headers];
     }
 
-    private function getHeader(array $headers, $key)
+    /**
+     * 根据头信息数组返回指定键名值
+     * @param array $headers 头信息
+     * @param string $key 键名
+     * @return mixed|null
+     */
+    private static function getHeader(array $headers, $key)
     {
         $lowercaseHeader = strtolower($key);
         foreach ($headers as $k => $v) {
@@ -157,11 +161,9 @@ class MultipartStream extends StreamDecorator implements StreamInterface
     }
 
     /**
-     * Determines the mimetype of a file by looking at its extension.
-     *
-     * @param $filename
-     *
-     * @return null|string
+     * 根据文件名返回 MIME
+     * @param string $filename 文件名
+     * @return string|null
      */
     private static function mimetypeFromFilename($filename)
     {
@@ -169,10 +171,8 @@ class MultipartStream extends StreamDecorator implements StreamInterface
     }
 
     /**
-     * Maps a file extensions to a mimetype.
-     *
-     * @param $extension string The file extension.
-     *
+     * 常见文件对应的 MIME
+     * @param string $extension 后缀名
      * @return string|null
      * @link http://svn.apache.org/repos/asf/httpd/httpd/branches/1.3.x/conf/mime.types
      */
@@ -284,9 +284,21 @@ class MultipartStream extends StreamDecorator implements StreamInterface
 
         $extension = strtolower($extension);
 
-        return isset($mimetypes[$extension])
-            ? $mimetypes[$extension]
-            : null;
+        return isset($mimetypes[$extension]) ? $mimetypes[$extension] : null;
     }
 
+    /**
+     * 将头信息数组专为POST文件头
+     * @param array $headers 头信息
+     * @return string
+     */
+    private function getHeaders(array $headers)
+    {
+        $str = '';
+        foreach ($headers as $key => $value) {
+            $str .= "{$key}: {$value}\r\n";
+        }
+
+        return "--{$this->boundary}\r\n" . trim($str) . "\r\n\r\n";
+    }
 }

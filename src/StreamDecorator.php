@@ -31,7 +31,7 @@ abstract class StreamDecorator implements StreamInterface
             return $this->stream;
         }
 
-        throw new UnexpectedValueException("$name not found on class");
+        throw new UnexpectedValueException("{$name} not found on class");
     }
 
     /**
@@ -135,6 +135,7 @@ abstract class StreamDecorator implements StreamInterface
 
     /**
      * 返回流是否可写
+     * @return bool
      */
     public function isWritable()
     {

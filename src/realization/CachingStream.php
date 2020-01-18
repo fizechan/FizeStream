@@ -1,12 +1,14 @@
 <?php
 
 
-namespace fize\stream;
+namespace fize\stream\realization;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use fize\io\File;
 use fize\io\Stream as StreamIO;
+use fize\stream\StreamDecorator;
+use fize\stream\Stream;
 
 /**
  * 可缓存流
@@ -26,6 +28,11 @@ class CachingStream extends StreamDecorator implements StreamInterface
      */
     private $skipReadBytes = 0;
 
+    /**
+     * 构造
+     * @param StreamInterface $stream 原始流
+     * @param StreamInterface|null $target 缓存目标流
+     */
     public function __construct(StreamInterface $stream, StreamInterface $target = null) {
         $this->remoteStream = $stream;
         $file = new File('php://temp', 'r+');
