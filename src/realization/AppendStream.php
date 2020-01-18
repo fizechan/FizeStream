@@ -1,12 +1,13 @@
 <?php
 
 
-namespace fize\stream;
+namespace fize\stream\realization;
 
 use Exception;
 use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
+use fize\stream\Stream;
 
 /**
  * 多流数据流
@@ -39,7 +40,7 @@ class AppendStream implements StreamInterface
 
     /**
      * 构造
-     * @param array $streams 待读取的数据流
+     * @param StreamInterface[] $streams 待读取的数据流
      */
     public function __construct(array $streams = [])
     {
