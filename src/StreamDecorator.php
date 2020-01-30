@@ -3,7 +3,6 @@
 
 namespace fize\stream;
 
-use UnexpectedValueException;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -15,38 +14,6 @@ abstract class StreamDecorator implements StreamInterface
      * @var StreamInterface 原始流
      */
     protected $stream;
-
-    /**
-     * 魔法方法：获取属性
-     *
-     * 参数 `$name`:
-     *   仅支持参数 `stream`
-     * @param string $name 属性名
-     * @return StreamInterface
-     * @todo 待移除该方法
-     */
-    public function __get($name)
-    {
-        if ($name == 'stream') {
-            $this->stream = $this->createStream();
-            return $this->stream;
-        }
-
-        throw new UnexpectedValueException("{$name} not found on class");
-    }
-
-    /**
-     * 魔法方法：调用方法
-     * @param $method
-     * @param array $args
-     * @return $this|mixed
-     * @todo 待移除该方法
-     */
-    public function __call($method, array $args)
-    {
-        $result = call_user_func_array([$this->stream, $method], $args);
-        return $result === $this->stream ? $this : $result;
-    }
 
     /**
      * 从头到尾将流中的所有数据读取到字符串

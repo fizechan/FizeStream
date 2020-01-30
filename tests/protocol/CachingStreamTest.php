@@ -68,17 +68,7 @@ class CachingStreamTest extends TestCase
 
     }
 
-    public function test__get()
-    {
-
-    }
-
     public function testGetContents()
-    {
-
-    }
-
-    public function test__call()
     {
 
     }

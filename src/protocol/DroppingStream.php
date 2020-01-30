@@ -9,7 +9,7 @@ use fize\stream\StreamDecorator;
 /**
  * 丢弃流
  *
- * 一旦底层流的大小变得太满，就开始删除数据。
+ * 一旦底层流的大小写满，就不再写入数据。
  */
 class DroppingStream extends StreamDecorator implements StreamInterface
 {
