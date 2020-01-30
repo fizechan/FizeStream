@@ -1,6 +1,6 @@
 <?php
 
-namespace fize\stream\realization;
+namespace fize\stream\protocol;
 
 use Psr\Http\Message\StreamInterface;
 use fize\io\Stream as StreamIO;

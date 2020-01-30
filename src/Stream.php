@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamInterface;
 use fize\io\Stream as StreamIO;
 use fize\io\File;
 use fize\misc\Preg;
-use fize\stream\realization\PumpStream;
+use fize\stream\protocol\PumpStream;
 
 /**
  * 数据流

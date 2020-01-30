@@ -23,6 +23,7 @@ abstract class StreamDecorator implements StreamInterface
      *   仅支持参数 `stream`
      * @param string $name 属性名
      * @return StreamInterface
+     * @todo 待移除该方法
      */
     public function __get($name)
     {
@@ -39,6 +40,7 @@ abstract class StreamDecorator implements StreamInterface
      * @param $method
      * @param array $args
      * @return $this|mixed
+     * @todo 待移除该方法
      */
     public function __call($method, array $args)
     {

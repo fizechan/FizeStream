@@ -1,7 +1,7 @@
 <?php
 
 
-namespace fize\stream\realization;
+namespace fize\stream\protocol;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
@@ -45,7 +45,8 @@ class CachingStream extends StreamDecorator implements StreamInterface
      */
     public function close()
     {
-        $this->remoteStream->close() && $this->stream->close();
+        $this->remoteStream->close();
+        $this->stream->close();
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace fize\stream\realization;
+namespace fize\stream\protocol;
 
 use Exception;
 use RuntimeException;
@@ -228,7 +228,7 @@ class AppendStream implements StreamInterface
 
         while ($remaining > 0) {
 
-            // 如果需要，进展到下一个流
+            // 如果需要，进入到下一个流
             if ($progressToNext || $this->streams[$this->current]->eof()) {
                 $progressToNext = false;
                 if ($this->current === $total) {

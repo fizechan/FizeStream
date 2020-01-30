@@ -1,7 +1,7 @@
 <?php
 
 
-namespace fize\stream\realization;
+namespace fize\stream\protocol;
 
 use RuntimeException;
 use Psr\Http\Message\StreamInterface;
@@ -132,13 +132,10 @@ class BufferStream implements StreamInterface
      */
     public function write($string)
     {
-        $this->buffer .= $string;
-
-        // @todo 该如何处理?
         if (strlen($this->buffer) >= $this->hwm) {
             return 0;
         }
-
+        $this->buffer .= $string;
         return strlen($string);
     }
 
@@ -193,6 +190,6 @@ class BufferStream implements StreamInterface
             return $this->hwm;
         }
 
-        return $key ? null : [];
+        return $key ? null : ['hwm' => $this->hwm];
     }
 }
