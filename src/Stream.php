@@ -79,14 +79,18 @@ class Stream implements StreamInterface
         if (is_resource($stream)) {
             $stream = new StreamIO($stream);
             $this->file = $stream->getFile();
-        }
-        if ($stream instanceof File) {
+        } elseif ($stream instanceof File) {
             $this->file = $stream;
             $resource = $stream->getStream();
             if (!is_resource($resource) || get_resource_type($resource) == 'Unknown') {
                 $stream->open();
             }
             $stream = new StreamIO($stream->getStream());
+        } elseif ($stream instanceof StreamIO) {
+            //@todo BUG待修复
+            $this->file = $stream->getFile();
+        } else {
+            throw new RuntimeException('Unable to construct stream with type ' . gettype($stream));
         }
         $this->stream = $stream;
         if (isset($options['size'])) {

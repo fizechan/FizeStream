@@ -36,8 +36,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
     public function __construct(StreamInterface $stream, StreamInterface $target = null) {
         $this->remoteStream = $stream;
         $file = new File('php://temp', 'r+');
-        $stream_io = new StreamIO($file->getStream());
-        $this->stream = $target ?: new Stream($stream_io);
+        $this->stream = $target ?: new Stream($file);
     }
 
     /**
@@ -109,7 +108,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      */
     public function write($string)
     {
-        $overflow = (strlen($string) + $this->tell()) - $this->remoteStream->tell();
+        $overflow = strlen($string) + $this->tell() - $this->remoteStream->tell();
         if ($overflow > 0) {
             $this->skipReadBytes += $overflow;
         }
