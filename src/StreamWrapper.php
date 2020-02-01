@@ -5,7 +5,6 @@ namespace fize\stream;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use fize\io\Stream;
 
 /**
  * 流包装器
@@ -68,8 +67,8 @@ class StreamWrapper
      */
     public static function register()
     {
-        if (!in_array('fize', Stream::getwrappers())) {
-            Stream::wrapperRegister('fize', __CLASS__);
+        if (!in_array('fize', stream_get_wrappers())) {
+            stream_wrapper_register('fize', __CLASS__);
         }
     }
 
@@ -80,7 +79,7 @@ class StreamWrapper
      */
     public static function createStreamContext(StreamInterface $stream)
     {
-        return Stream::contextCreate([
+        return stream_context_create([
             'fize' => ['stream' => $stream]
         ]);
     }
@@ -93,7 +92,7 @@ class StreamWrapper
      * @param string $opened_path
      * @return bool 如果路径被成功打开，该值返回实际路径
      */
-    public function streamOpen($path, $mode, $options, &$opened_path)
+    public function stream_open($path, $mode, $options, &$opened_path)
     {
         $this->path = $path;
         $this->options = $options;
@@ -114,7 +113,7 @@ class StreamWrapper
      * @param int $count 字节数
      * @return string
      */
-    public function streamRead($count)
+    public function stream_read($count)
     {
         return $this->stream->read($count);
     }
@@ -124,7 +123,7 @@ class StreamWrapper
      * @param string $data 数据
      * @return int
      */
-    public function streamWrite($data)
+    public function stream_write($data)
     {
         return (int)$this->stream->write($data);
     }
@@ -133,7 +132,7 @@ class StreamWrapper
      * 返回当前流位置
      * @return int
      */
-    public function streamTell()
+    public function stream_tell()
     {
         return $this->stream->tell();
     }
@@ -142,7 +141,7 @@ class StreamWrapper
      * 是否到流的结尾
      * @return bool
      */
-    public function streamEof()
+    public function stream_eof()
     {
         return $this->stream->eof();
     }
@@ -153,7 +152,7 @@ class StreamWrapper
      * @param int $whence 偏移参照
      * @return bool
      */
-    public function streamSeek($offset, $whence)
+    public function stream_seek($offset, $whence)
     {
         $this->stream->seek($offset, $whence);
 
@@ -165,7 +164,7 @@ class StreamWrapper
      * @param int $cast_as STREAM_CAST_FOR_SELECT|STREAM_CAST_AS_STREAM
      * @return resource|null
      */
-    public function streamCast($cast_as)
+    public function stream_cast($cast_as)
     {
         if ($cast_as == STREAM_CAST_FOR_SELECT) {
             return null;
@@ -179,7 +178,7 @@ class StreamWrapper
      * 检索关于文件资源的信息
      * @return array
      */
-    public function streamStat()
+    public function stream_stat()
     {
         static $modeMap = [
             'r'  => 33060,
@@ -189,6 +188,7 @@ class StreamWrapper
             'wb' => 33188
         ];
 
+        $size = $this->stream->getSize();
         return [
             'dev'     => 0,
             'ino'     => 0,
@@ -197,7 +197,7 @@ class StreamWrapper
             'uid'     => 0,
             'gid'     => 0,
             'rdev'    => 0,
-            'size'    => $this->stream->getSize() ?: 0,
+            'size'    => $size ? $size : 0,
             'atime'   => 0,
             'mtime'   => 0,
             'ctime'   => 0,
@@ -212,7 +212,7 @@ class StreamWrapper
      * @param int $flags 标识
      * @return array
      */
-    public function urlStat($path, $flags)
+    public function url_stat($path, $flags)
     {
         $this->path = $path;
         $this->flags = $flags;

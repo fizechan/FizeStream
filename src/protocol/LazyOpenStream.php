@@ -5,7 +5,6 @@ namespace fize\stream\protocol;
 
 
 use Psr\Http\Message\StreamInterface;
-use fize\io\File;
 use fize\stream\StreamDecorator;
 use fize\stream\Stream;
 
@@ -45,9 +44,6 @@ class LazyOpenStream extends StreamDecorator implements StreamInterface
      */
     protected function createStream()
     {
-        $file = new File($this->filename, $this->mode);
-        $file->open();
-        $handle = $file->getStream();
-        return Stream::create($handle);
+        return new Stream($this->filename, $this->mode);
     }
 }

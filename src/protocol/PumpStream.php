@@ -96,7 +96,7 @@ class PumpStream implements StreamInterface
      * 获取流的数据大小
      *
      * 如果可知，返回以字节为单位的大小
-     * @return int
+     * @return int|null
      */
     public function getSize()
     {

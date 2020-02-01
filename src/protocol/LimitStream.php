@@ -61,7 +61,8 @@ class LimitStream extends StreamDecorator implements StreamInterface
      */
     public function getSize()
     {
-        if (null === ($length = $this->stream->getSize())) {
+        $length = $this->stream->getSize();
+        if (null === $length) {
             return null;
         } elseif ($this->limit == -1) {
             return $length - $this->offset;

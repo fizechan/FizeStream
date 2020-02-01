@@ -5,7 +5,7 @@ namespace protocol;
 use fize\stream\protocol\BufferStream;
 use PHPUnit\Framework\TestCase;
 
-class BufferStreamTest extends TestCase
+class TestBufferStream extends TestCase
 {
 
     public function test__construct()
@@ -21,7 +21,7 @@ class BufferStreamTest extends TestCase
         $stream->write('123456789');
         $stream->write('123456789');
         $str = (string)$stream;
-        self::assertEquals($str, '123456789123456789');
+        self::assertEquals('123456789123456789', $str);
     }
 
     public function testClose()
@@ -31,7 +31,7 @@ class BufferStreamTest extends TestCase
         $stream->write('123456789');
         $stream->close();
         $str = (string)$stream;
-        self::assertEquals($str, '');
+        self::assertEquals('', $str);
     }
 
     public function testDetach()
@@ -41,7 +41,7 @@ class BufferStreamTest extends TestCase
         $stream->write('123456789');
         $stream->detach();
         $str = (string)$stream;
-        self::assertEquals($str, '');
+        self::assertEquals('', $str);
     }
 
     public function testGetSize()
@@ -50,7 +50,7 @@ class BufferStreamTest extends TestCase
         $stream->write('123456789');
         $size = $stream->getSize();
         var_dump($size);
-        self::assertEquals($size, 9);
+        self::assertEquals(9, $size);
     }
 
     public function testTell()
@@ -122,9 +122,9 @@ class BufferStreamTest extends TestCase
         $stream = new BufferStream(10);
         $stream->write('0123456789');
         $str1 = $stream->read(5);
-        self::assertEquals($str1, '01234');
+        self::assertEquals('01234', $str1);
         $str2 = $stream->read(5);
-        self::assertEquals($str2, '56789');
+        self::assertEquals('56789', $str2);
     }
 
     public function testGetContents()
@@ -133,7 +133,7 @@ class BufferStreamTest extends TestCase
         $stream->write('0123456789');
         $stream->read(5);
         $str1 = $stream->getContents();
-        self::assertEquals($str1, '56789');
+        self::assertEquals('56789', $str1);
     }
 
     public function testGetMetadata()

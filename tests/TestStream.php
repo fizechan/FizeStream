@@ -2,38 +2,27 @@
 
 
 use fize\stream\Stream;
-use fize\io\File;
 use PHPUnit\Framework\TestCase;
 
-class StreamTest extends TestCase
+class TestStream extends TestCase
 {
 
     public function test__construct()
     {
-        $file1 = new File(__DIR__ . '/../temp/stream.txt', 'w+');
-        $stream1 = new Stream($file1);
+        $stream1 = new Stream(__DIR__ . '/../temp/stream.txt', 'w+');
         self::assertIsObject($stream1);
-
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'w+');
-        $file->open();
-        var_dump($file->getStream());
-        $stream = new Stream($file->getStream());
-        self::assertIsObject($stream);
     }
 
     public function test__destruct()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'w+');
-        $file->open();
-        $stream = new Stream($file->getStream());
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'w+');
         unset($stream);
         self::assertTrue(true);
     }
 
     public function test__toString()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($file);
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $string = (string)$stream;
         var_dump($string);
         self::assertIsString($string);
@@ -41,29 +30,22 @@ class StreamTest extends TestCase
 
     public function testClose()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'w+');
-        $file->open();
-        $stream = new Stream($file->getStream());
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'w+');
         $stream->close();
         self::assertTrue(true);
     }
 
     public function testDetach()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'w+');
-        $file->open();
-        $stream = new Stream($file->getStream());
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'w+');
         $resource = $stream->detach();
         var_dump($resource);
-        var_dump($file->getStream());
         self::assertTrue(true);
     }
 
     public function testGetSize()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $file->open();
-        $stream = new Stream($file->getStream());
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $size = $stream->getSize();
         var_dump($size);
         self::assertIsInt($size);
@@ -71,10 +53,9 @@ class StreamTest extends TestCase
 
     public function testTell()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($file);
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $pos1 = $stream->tell();
-        self::assertEquals($pos1, 0);
+        self::assertEquals(0, $pos1);
         $stream->read(100);
         $pos2 = $stream->tell();
         var_dump($pos2);
@@ -83,8 +64,7 @@ class StreamTest extends TestCase
 
     public function testEof()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($file);
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $eof1 = $stream->eof();
         self::assertFalse($eof1);
         $stream->getContents();
@@ -94,16 +74,14 @@ class StreamTest extends TestCase
 
     public function testIsSeekable()
     {
-        $file1 = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream1 = new Stream($file1);
+        $stream1 = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $seek1 = $stream1->isSeekable();
         self::assertTrue($seek1);
     }
 
     public function testSeek()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($file);
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $stream->seek(100);
         $string = $stream->read(10);
         var_dump($string);
@@ -112,8 +90,7 @@ class StreamTest extends TestCase
 
     public function testRewind()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($file);
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $stream->seek(100);
         $string1 = $stream->read(10);
         $stream->rewind();
@@ -125,42 +102,36 @@ class StreamTest extends TestCase
 
     public function testIsWritable()
     {
-        $file1 = new File(__DIR__ . '/../temp/stream1.txt', 'w');
-        $stream1 = new Stream($file1);
+        $stream1 = new Stream(__DIR__ . '/../temp/stream1.txt', 'w');
         $seek1 = $stream1->isWritable();
         self::assertTrue($seek1);
 
-        $file2 = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream2 = new Stream($file2);
+        $stream2 = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $seek2 = $stream2->isWritable();
         self::assertFalse($seek2);
     }
 
     public function testWrite()
     {
-        $file1 = new File(__DIR__ . '/../temp/stream1.txt', 'w');
-        $stream1 = new Stream($file1);
+        $stream1 = new Stream(__DIR__ . '/../temp/stream1.txt', 'w');
         $ink1 = $stream1->write('哈哈哈哈！~！~！');
         self::assertIsInt($ink1);
     }
 
     public function testIsReadable()
     {
-        $file1 = new File(__DIR__ . '/../temp/stream1.txt', 'w');
-        $stream1 = new Stream($file1);
+        $stream1 = new Stream(__DIR__ . '/../temp/stream1.txt', 'w');
         $result1 = $stream1->isReadable();
         self::assertFalse($result1);
 
-        $file2 = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream2 = new Stream($file2);
+        $stream2 = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $result2 = $stream2->isReadable();
         self::assertTrue($result2);
     }
 
     public function testRead()
     {
-        $file2 = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream2 = new Stream($file2);
+        $stream2 = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $string2 = $stream2->read(100);
         var_dump($string2);
         self::assertIsString($string2);
@@ -168,8 +139,7 @@ class StreamTest extends TestCase
 
     public function testGetContents()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($file);
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $contents = $stream->getContents();
         var_dump($contents);
         self::assertIsString($contents);
@@ -177,8 +147,7 @@ class StreamTest extends TestCase
 
     public function testGetMetadata()
     {
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($file);
+        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
         $metas = $stream->getMetadata();
         var_dump($metas);
         self::assertIsArray($metas);
@@ -191,13 +160,9 @@ class StreamTest extends TestCase
 
     public function testCreate()
     {
-        //$stream = Stream::create(fopen('php://temp', 'r+'));
-
-        //$file = new File(__DIR__ . '/../temp/stream2.txt', 'w+');
-        //$stream = Stream::create($file);
-
-        $stream = Stream::create(new File(__DIR__ . '/../temp/stream2.txt', 'w+'));
-        //var_dump($stream);
+        $file = fopen(__DIR__ . '/../temp/stream2.txt', 'w+');
+        $stream = Stream::create($file);
+        var_dump($stream);
         $stream->write('abc123');
         $stream->close();
         self::assertIsObject($stream);
@@ -205,7 +170,8 @@ class StreamTest extends TestCase
 
     public function testCopyToString()
     {
-        $stream = Stream::create(new File(__DIR__ . '/../temp/stream.txt', 'r'));
+        $file = fopen(__DIR__ . '/../temp/stream.txt', 'r');
+        $stream = Stream::create($file);
         $string = Stream::copyToString($stream);
         var_dump($string);
         self::assertIsString($string);
@@ -213,11 +179,11 @@ class StreamTest extends TestCase
 
     public function testCopyToStream()
     {
-        $stream1 = Stream::create(new File(__DIR__ . '/../temp/stream.txt', 'r'));
-        $stream2 = Stream::create(new File(__DIR__ . '/../temp/stream2.txt', 'w+'));
+        $file1 = fopen(__DIR__ . '/../temp/stream.txt', 'r');
+        $stream1 = Stream::create($file1);
+        $file2 = fopen(__DIR__ . '/../temp/stream2.txt', 'w+');
+        $stream2 = Stream::create($file2);
         Stream::copyToStream($stream1, $stream2);
         self::assertTrue(true);
     }
-
-
 }

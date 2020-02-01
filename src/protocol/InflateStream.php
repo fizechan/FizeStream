@@ -3,7 +3,6 @@
 namespace fize\stream\protocol;
 
 use Psr\Http\Message\StreamInterface;
-use fize\io\Stream as StreamIO;
 use fize\stream\StreamDecorator;
 use fize\stream\StreamWrapper;
 use fize\stream\Stream;
@@ -27,7 +26,7 @@ class InflateStream extends StreamDecorator implements StreamInterface
         $stream = new LimitStream($stream, -1, 10 + $filenameHeaderLength);
         $resource = StreamWrapper::getResource($stream);
         stream_filter_append($resource, 'zlib.inflate', STREAM_FILTER_READ);
-        $this->stream = $stream->isSeekable() ? new Stream(new StreamIO($resource)) : new NoSeekStream(new Stream(new StreamIO($resource)));
+        $this->stream = $stream->isSeekable() ? new Stream($resource) : new NoSeekStream(new Stream($resource));
     }
 
     /**

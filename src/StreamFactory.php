@@ -5,7 +5,6 @@ namespace fize\stream;
 
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
-use fize\io\File;
 
 /**
  * 流工厂类
@@ -31,8 +30,7 @@ class StreamFactory implements StreamFactoryInterface
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
-        $file = new File($filename, $mode);
-        return Stream::create($file);
+        return new Stream($filename, $mode);
     }
 
     /**

@@ -7,7 +7,7 @@ use fize\stream\StreamFactory;
 use fize\stream\protocol\NoSeekStream;
 use PHPUnit\Framework\TestCase;
 
-class AppendStreamTest extends TestCase
+class TestAppendStream extends TestCase
 {
 
     public function test__construct()
@@ -32,7 +32,7 @@ class AppendStreamTest extends TestCase
         $stream = new AppendStream([$stream1, $stream2]);
         $str = (string)$stream;
         var_dump($str);
-        self::assertEquals($str, '123456');
+        self::assertEquals('123456', $str);
     }
 
     public function testClose()

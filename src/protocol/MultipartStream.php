@@ -84,7 +84,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
 
         $element['contents'] = Stream::create($element['contents']);
 
-        if (empty($element['filename'])) {
+        if (isset($element['filename']) && empty($element['filename'])) {
             $uri = $element['contents']->getMetadata('uri');
             if (substr($uri, 0, 6) !== 'php://') {
                 $element['filename'] = $uri;

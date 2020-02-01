@@ -8,8 +8,6 @@ use Exception;
 use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use fize\io\Stream as StreamIO;
-use fize\io\File;
 use fize\misc\Preg;
 use fize\stream\protocol\PumpStream;
 
@@ -30,14 +28,9 @@ class Stream implements StreamInterface
     const WRITABLE_MODES = '/a|w|r\+|rb\+|rw|x|c/';
 
     /**
-     * @var StreamIO 流对象
+     * @var resource 资源流上下文
      */
-    protected $stream;
-
-    /**
-     * @var File 文件对象
-     */
-    protected $file;
+    protected $context;
 
     /**
      * @var int 流的数据大小
@@ -70,34 +63,24 @@ class Stream implements StreamInterface
     protected $customMetadata;
 
     /**
-     * 构造
-     * @param StreamIO|File|resource $stream 流对象、文件对象、流
+     * 初始化
+     * @param resource|string $resource 资源流/数据包/上下文/文件路径
+     * @param string $mode 打开模式
      * @param array $options 附加选项
      */
-    public function __construct($stream, array $options = [])
+    public function __construct($resource, $mode = null, array $options = [])
     {
-        if (is_resource($stream)) {
-            $stream = new StreamIO($stream);
-            $this->file = $stream->getFile();
-        } elseif ($stream instanceof File) {
-            $this->file = $stream;
-            $resource = $stream->getStream();
-            if (!is_resource($resource) || get_resource_type($resource) == 'Unknown') {
-                $stream->open();
-            }
-            $stream = new StreamIO($stream->getStream());
-        } elseif ($stream instanceof StreamIO) {
-            //@todo BUG待修复
-            $this->file = $stream->getFile();
+        if (is_resource($resource)) {
+            $this->context = $resource;
         } else {
-            throw new RuntimeException('Unable to construct stream with type ' . gettype($stream));
+            $this->context = fopen($resource, $mode);
         }
-        $this->stream = $stream;
+
         if (isset($options['size'])) {
             $this->size = $options['size'];
         }
         $this->customMetadata = isset($options['metadata']) ? $options['metadata'] : [];
-        $meta = $this->stream->getMetaData();
+        $meta = $this->getMetaData();
         $this->seekable = $meta['seekable'];
         $this->readable = Preg::match(self::READABLE_MODES, $meta['mode']) ? true : false;
         $this->writable = Preg::match(self::WRITABLE_MODES, $meta['mode']) ? true : false;
@@ -120,7 +103,7 @@ class Stream implements StreamInterface
     {
         try {
             $this->seek(0);
-            return $this->stream->getContents();
+            return $this->getContents();
         } catch (Exception $e) {
             return '';
         }
@@ -131,10 +114,9 @@ class Stream implements StreamInterface
      */
     public function close()
     {
-        if (isset($this->stream)) {
-            $this->stream = null;
-            $this->file = null;
-            $this->detach();
+        $context = $this->detach();
+        if($context && is_resource($context) && get_resource_type($context) == 'stream') {
+            fclose($context);
         }
     }
 
@@ -146,16 +128,16 @@ class Stream implements StreamInterface
      */
     public function detach()
     {
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             return null;
         }
 
-        $result = $this->stream->getResource();
-        unset($this->stream);
+        $context = $this->context;
+        unset($this->context);
         $this->size = $this->uri = null;
         $this->readable = $this->writable = $this->seekable = false;
 
-        return $result;
+        return $context;
     }
 
     /**
@@ -170,7 +152,7 @@ class Stream implements StreamInterface
             return $this->size;
         }
 
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             return null;
         }
 
@@ -178,7 +160,7 @@ class Stream implements StreamInterface
             clearstatcache(true, $this->uri);
         }
 
-        $stats = $this->file->stat();
+        $stats = fstat($this->context);
         if (isset($stats['size'])) {
             $this->size = $stats['size'];
             return $this->size;
@@ -193,11 +175,11 @@ class Stream implements StreamInterface
      */
     public function tell()
     {
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
         }
 
-        $result = $this->file->tell();
+        $result = ftell($this->context);
 
         if ($result === false) {
             throw new RuntimeException('Unable to determine stream position');
@@ -212,11 +194,11 @@ class Stream implements StreamInterface
      */
     public function eof()
     {
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
         }
 
-        return $this->file->eof();
+        return feof($this->context);
     }
 
     /**
@@ -235,13 +217,13 @@ class Stream implements StreamInterface
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->seekable) {
             throw new RuntimeException('Stream is not seekable');
         }
-        if ($this->file->seek($offset, $whence) === -1) {
+        if (fseek($this->context, $offset, $whence) === -1) {
             throw new RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . var_export($whence, true));
         }
     }
@@ -270,7 +252,7 @@ class Stream implements StreamInterface
      */
     public function write($string)
     {
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->writable) {
@@ -278,7 +260,7 @@ class Stream implements StreamInterface
         }
 
         $this->size = null;  //数据大小无法得知
-        $result = $this->file->write($string);
+        $result = fwrite($this->context, $string);
 
         if ($result === false) {
             throw new RuntimeException('Unable to write to stream');
@@ -303,7 +285,7 @@ class Stream implements StreamInterface
      */
     public function read($length)
     {
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->readable) {
@@ -317,7 +299,7 @@ class Stream implements StreamInterface
             return '';
         }
 
-        $string = $this->file->read($length);
+        $string = fread($this->context, $length);
         if (false === $string) {
             throw new RuntimeException('Unable to read from stream');
         }
@@ -331,11 +313,11 @@ class Stream implements StreamInterface
      */
     public function getContents()
     {
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
         }
 
-        $contents = $this->stream->getContents();
+        $contents = stream_get_contents($this->context);
 
         if ($contents === false) {
             throw new RuntimeException('Unable to read stream contents');
@@ -351,14 +333,14 @@ class Stream implements StreamInterface
      */
     public function getMetadata($key = null)
     {
-        if (!isset($this->stream)) {
+        if (!isset($this->context)) {
             return $key ? null : [];
         } elseif (!$key) {
-            return $this->customMetadata + $this->stream->getMetaData();
+            return $this->customMetadata + stream_get_meta_data($this->context);
         } elseif (isset($this->customMetadata[$key])) {
             return $this->customMetadata[$key];
         }
-        $meta = $this->stream->getMetaData();
+        $meta = stream_get_meta_data($this->context);
         return isset($meta[$key]) ? $meta[$key] : null;
     }
 
@@ -371,21 +353,16 @@ class Stream implements StreamInterface
     public static function create($resource = '', array $options = [])
     {
         if (is_scalar($resource)) {
-            $file = new File('php://temp', 'r+');
+            $file = fopen('php://temp', 'r+');
             if ($resource !== '') {
-                $file->write($resource);
-                $file->seek(0);
+                fwrite($file, $resource);
+                fseek($file, 0);
             }
             return new Stream($file, $options);
         }
 
         if (is_null($resource)) {
-            $file = new File('php://temp', 'r+');
-            return new Stream($file->getStream(), $options);
-        }
-
-        if ($resource instanceof File) {
-            return new Stream($resource, $options);
+            return new Stream('php://temp', 'r+', $options);
         }
 
         if (is_resource($resource)) {

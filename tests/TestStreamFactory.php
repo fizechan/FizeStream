@@ -4,7 +4,7 @@
 use fize\stream\StreamFactory;
 use PHPUnit\Framework\TestCase;
 
-class StreamFactoryTest extends TestCase
+class TestStreamFactory extends TestCase
 {
 
     public function testCreateStream()
@@ -15,12 +15,12 @@ class StreamFactoryTest extends TestCase
         var_dump($stream);
         $content = $stream->getContents();
         var_dump($content);
-        self::assertEquals($content, '0123456789');
+        self::assertEquals('0123456789', $content);
         $stream->write('9876543210');
         $stream->rewind();
         $content = $stream->getContents();
         var_dump($content);
-        self::assertEquals($content, '01234567899876543210');
+        self::assertEquals('01234567899876543210', $content);
         $writable = $stream->isWritable();
         self::assertTrue($writable);
         $readble = $stream->isReadable();
