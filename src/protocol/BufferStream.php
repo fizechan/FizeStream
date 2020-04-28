@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
 use RuntimeException;

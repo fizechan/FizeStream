@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
 use InvalidArgumentException;
@@ -28,7 +27,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
 
     /**
      * 构造
-     * @param StreamInterface $stream 原始流
+     * @param StreamInterface      $stream 原始流
      * @param StreamInterface|null $target 缓存目标流
      */
     public function __construct(StreamInterface $stream, StreamInterface $target = null)

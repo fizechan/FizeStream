@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream;
 
 use Psr\Http\Message\StreamFactoryInterface;
@@ -25,7 +24,7 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * 通过现有文件创建一个流
      * @param string $filename 用作流基础的文件名或 URI
-     * @param string $mode 用于打开基础文件名或流的模式
+     * @param string $mode     用于打开基础文件名或流的模式
      * @return StreamInterface
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface

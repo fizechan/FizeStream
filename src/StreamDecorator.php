@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream;
 
 use Psr\Http\Message\StreamInterface;

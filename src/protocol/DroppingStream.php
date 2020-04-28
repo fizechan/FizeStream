@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
 use Psr\Http\Message\StreamInterface;
@@ -21,8 +20,8 @@ class DroppingStream extends StreamDecorator implements StreamInterface
 
     /**
      * 构造
-     * @param StreamInterface $stream 流
-     * @param int $maxLength 最大获取字节数
+     * @param StreamInterface $stream    流
+     * @param int             $maxLength 最大获取字节数
      */
     public function __construct(StreamInterface $stream, $maxLength)
     {

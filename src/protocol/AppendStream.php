@@ -1,11 +1,10 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
 use Exception;
-use RuntimeException;
 use InvalidArgumentException;
+use RuntimeException;
 use Psr\Http\Message\StreamInterface;
 use fize\stream\Stream;
 
@@ -133,7 +132,7 @@ class AppendStream implements StreamInterface
      */
     public function eof()
     {
-        if(!$this->streams) {
+        if (!$this->streams) {
             return true;
         }
         return $this->current >= count($this->streams) - 1 && $this->streams[$this->current]->eof();

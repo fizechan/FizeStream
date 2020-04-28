@@ -1,12 +1,10 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
-
 use Psr\Http\Message\StreamInterface;
-use fize\stream\StreamDecorator;
 use fize\stream\Stream;
+use fize\stream\StreamDecorator;
 
 /**
  * 惰性流
@@ -29,7 +27,7 @@ class LazyOpenStream extends StreamDecorator implements StreamInterface
     /**
      * 构造
      * @param string $filename 要打开的文件
-     * @param string $mode 打开方式
+     * @param string $mode     打开方式
      */
     public function __construct($filename, $mode)
     {

@@ -3,9 +3,9 @@
 namespace fize\stream\protocol;
 
 use Psr\Http\Message\StreamInterface;
+use fize\stream\Stream;
 use fize\stream\StreamDecorator;
 use fize\stream\StreamWrapper;
-use fize\stream\Stream;
 
 /**
  * 解压流
@@ -32,7 +32,7 @@ class InflateStream extends StreamDecorator implements StreamInterface
     /**
      * 获取文件头长度
      * @param StreamInterface $stream 流对象
-     * @param string $header 文件头
+     * @param string          $header 文件头
      * @return int
      */
     private function getLengthOfPossibleFilenameHeader(StreamInterface $stream, $header)

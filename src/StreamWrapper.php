@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream;
 
 use InvalidArgumentException;
@@ -86,9 +85,9 @@ class StreamWrapper
 
     /**
      * 打开文件或者URL
-     * @param string $path 文件路径或者URL
-     * @param string $mode 模式
-     * @param array $options 选项
+     * @param string $path    文件路径或者URL
+     * @param string $mode    模式
+     * @param array  $options 选项
      * @param string $opened_path
      * @return bool 如果路径被成功打开，该值返回实际路径
      */
@@ -208,8 +207,8 @@ class StreamWrapper
 
     /**
      * 检索关于文件的信息
-     * @param string $path 路径或者URL
-     * @param int $flags 标识
+     * @param string $path  路径或者URL
+     * @param int    $flags 标识
      * @return array
      */
     public function url_stat($path, $flags)

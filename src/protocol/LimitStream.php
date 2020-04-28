@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
 use RuntimeException;
@@ -28,8 +27,8 @@ class LimitStream extends StreamDecorator implements StreamInterface
     /**
      * 构造
      * @param StreamInterface $stream 流对象
-     * @param int $limit 允许读取的字节数
-     * @param int $offset 偏移
+     * @param int             $limit  允许读取的字节数
+     * @param int             $offset 偏移
      */
     public function __construct(StreamInterface $stream, $limit = -1, $offset = 0)
     {

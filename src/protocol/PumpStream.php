@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
 use Exception;
@@ -47,8 +46,8 @@ class PumpStream implements StreamInterface
      * 参数 `$source`:
      *   该方法接受一个用于控制返回的数据量的整型参数。
      *   调用时返回一个字符串，如果错误则返回 false 或 EOF。
-     * @param callable $source 数据源
-     * @param array $options 选项
+     * @param callable $source  数据源
+     * @param array    $options 选项
      */
     public function __construct(callable $source, array $options = [])
     {

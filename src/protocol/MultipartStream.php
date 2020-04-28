@@ -1,12 +1,11 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use fize\stream\StreamDecorator;
 use fize\stream\Stream;
+use fize\stream\StreamDecorator;
 
 /**
  * 多组件流
@@ -23,7 +22,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
 
     /**
      * 构造
-     * @param array $elements 组件
+     * @param array  $elements 组件
      * @param string $boundary 边界分隔符
      */
     public function __construct(array $elements = [], $boundary = null)
@@ -71,8 +70,8 @@ class MultipartStream extends StreamDecorator implements StreamInterface
 
     /**
      * 添加组件
-     * @param AppendStream $stream 组件流对象
-     * @param array $element 对象属性
+     * @param AppendStream $stream  组件流对象
+     * @param array        $element 对象属性
      */
     private function addElement(AppendStream $stream, array $element)
     {
@@ -105,10 +104,10 @@ class MultipartStream extends StreamDecorator implements StreamInterface
 
     /**
      * 创建组件
-     * @param string $name 名称
-     * @param StreamInterface $stream 流对象
-     * @param string $filename 文件名
-     * @param array $headers 头信息
+     * @param string          $name     名称
+     * @param StreamInterface $stream   流对象
+     * @param string          $filename 文件名
+     * @param array           $headers  头信息
      * @return array [$stream, $headers]
      */
     private function createElement($name, StreamInterface $stream, $filename, array $headers)
@@ -144,8 +143,8 @@ class MultipartStream extends StreamDecorator implements StreamInterface
 
     /**
      * 根据头信息数组返回指定键名值
-     * @param array $headers 头信息
-     * @param string $key 键名
+     * @param array  $headers 头信息
+     * @param string $key     键名
      * @return mixed|null
      */
     private static function getHeader(array $headers, $key)

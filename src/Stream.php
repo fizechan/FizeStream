@@ -1,12 +1,11 @@
 <?php
 
-
 namespace fize\stream;
 
-use Iterator;
 use Exception;
-use RuntimeException;
 use InvalidArgumentException;
+use Iterator;
+use RuntimeException;
 use Psr\Http\Message\StreamInterface;
 use fize\misc\Preg;
 use fize\stream\protocol\PumpStream;
@@ -65,8 +64,8 @@ class Stream implements StreamInterface
     /**
      * 初始化
      * @param resource|string $resource 资源流/数据包/上下文/文件路径
-     * @param string $mode 打开模式
-     * @param array $options 附加选项
+     * @param string          $mode     打开模式
+     * @param array           $options  附加选项
      */
     public function __construct($resource, $mode = null, array $options = [])
     {
@@ -115,7 +114,7 @@ class Stream implements StreamInterface
     public function close()
     {
         $context = $this->detach();
-        if($context && is_resource($context) && get_resource_type($context) == 'stream') {
+        if ($context && is_resource($context) && get_resource_type($context) == 'stream') {
             fclose($context);
         }
     }
@@ -347,7 +346,7 @@ class Stream implements StreamInterface
     /**
      * 创建流
      * @param mixed $resource 资源
-     * @param array $options 选项
+     * @param array $options  选项
      * @return StreamInterface
      */
     public static function create($resource = '', array $options = [])
@@ -398,7 +397,7 @@ class Stream implements StreamInterface
     /**
      * 将流复制为字符串
      * @param StreamInterface $stream 流
-     * @param int $maxLen 最长字节数，-1表示不限制
+     * @param int             $maxLen 最长字节数，-1表示不限制
      * @return string
      */
     public static function copyToString(StreamInterface $stream, $maxLen = -1)
@@ -432,8 +431,8 @@ class Stream implements StreamInterface
     /**
      * 将一个流的内容复制到另一个流中
      * @param StreamInterface $source 源
-     * @param StreamInterface $dest 目标
-     * @param int $maxLen 直到指定的数字为止字节已被读取
+     * @param StreamInterface $dest   目标
+     * @param int             $maxLen 直到指定的数字为止字节已被读取
      */
     public static function copyToStream(StreamInterface $source, StreamInterface $dest, $maxLen = -1)
     {

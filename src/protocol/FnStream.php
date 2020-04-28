@@ -1,6 +1,5 @@
 <?php
 
-
 namespace fize\stream\protocol;
 
 use LogicException;
@@ -199,8 +198,8 @@ class FnStream extends StreamDecorator implements StreamInterface
 
     /**
      * 通过拦截特定的方法调用向基础流添加自定义功能。
-     * @param StreamInterface $stream 流
-     * @param array $methods 自定义功能
+     * @param StreamInterface $stream  流
+     * @param array           $methods 自定义功能
      * @return static
      */
     public static function decorate(StreamInterface $stream, array $methods)
