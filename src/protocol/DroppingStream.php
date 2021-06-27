@@ -23,7 +23,7 @@ class DroppingStream extends StreamDecorator implements StreamInterface
      * @param StreamInterface $stream    流
      * @param int             $maxLength 最大获取字节数
      */
-    public function __construct(StreamInterface $stream, $maxLength)
+    public function __construct(StreamInterface $stream, int $maxLength)
     {
         $this->stream = $stream;
         $this->maxLength = $maxLength;
@@ -34,7 +34,7 @@ class DroppingStream extends StreamDecorator implements StreamInterface
      * @param string $string 要写入流的数据
      * @return int 返回写入流的字节数
      */
-    public function write($string)
+    public function write($string): int
     {
         $diff = $this->maxLength - $this->stream->getSize();
 

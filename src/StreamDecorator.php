@@ -51,7 +51,7 @@ abstract class StreamDecorator implements StreamInterface
      * 如果可知，返回以字节为单位的大小
      * @return int|null 未知返回 null
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->stream->getSize();
     }
@@ -60,7 +60,7 @@ abstract class StreamDecorator implements StreamInterface
      * 返回当前读/写的指针位置
      * @return int
      */
-    public function tell()
+    public function tell(): int
     {
         return $this->stream->tell();
     }
@@ -69,7 +69,7 @@ abstract class StreamDecorator implements StreamInterface
      * 是否位于流的末尾
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         return $this->stream->eof();
     }
@@ -78,7 +78,7 @@ abstract class StreamDecorator implements StreamInterface
      * 返回流是否可随机读取
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return $this->stream->isSeekable();
     }
@@ -105,7 +105,7 @@ abstract class StreamDecorator implements StreamInterface
      * 返回流是否可写
      * @return bool
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return $this->stream->isWritable();
     }
@@ -115,7 +115,7 @@ abstract class StreamDecorator implements StreamInterface
      * @param string $string 要写入流的数据
      * @return int 返回写入流的字节数
      */
-    public function write($string)
+    public function write($string): int
     {
         return $this->stream->write($string);
     }
@@ -124,7 +124,7 @@ abstract class StreamDecorator implements StreamInterface
      * 返回流是否可读
      * @return bool
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         return $this->stream->isReadable();
     }
@@ -134,7 +134,7 @@ abstract class StreamDecorator implements StreamInterface
      * @param int $length 最多读取 $length 字节的数据
      * @return string
      */
-    public function read($length)
+    public function read($length): string
     {
         return $this->stream->read($length);
     }
@@ -143,7 +143,7 @@ abstract class StreamDecorator implements StreamInterface
      * 返回字符串中的剩余内容
      * @return string
      */
-    public function getContents()
+    public function getContents(): string
     {
         return Stream::copyToString($this);
     }

@@ -27,7 +27,7 @@ class BufferStream implements StreamInterface
      * 构造
      * @param int $hwm 最高缓冲量
      */
-    public function __construct($hwm = 16384)
+    public function __construct(int $hwm = 16384)
     {
         $this->hwm = $hwm;
     }
@@ -67,7 +67,7 @@ class BufferStream implements StreamInterface
      * 如果可知，返回以字节为单位的大小
      * @return int
      */
-    public function getSize()
+    public function getSize(): int
     {
         return strlen($this->buffer);
     }
@@ -84,7 +84,7 @@ class BufferStream implements StreamInterface
      * 是否位于流的末尾
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         return strlen($this->buffer) === 0;
     }
@@ -93,7 +93,7 @@ class BufferStream implements StreamInterface
      * 返回流是否可随机读取
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return false;
     }
@@ -119,7 +119,7 @@ class BufferStream implements StreamInterface
     /**
      * 返回流是否可写
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return true;
     }
@@ -129,7 +129,7 @@ class BufferStream implements StreamInterface
      * @param string $string 要写入流的数据
      * @return int 返回写入流的字节数
      */
-    public function write($string)
+    public function write($string): int
     {
         if (strlen($this->buffer) >= $this->hwm) {
             return 0;
@@ -142,7 +142,7 @@ class BufferStream implements StreamInterface
      * 返回流是否可读
      * @return bool
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         return true;
     }
@@ -152,7 +152,7 @@ class BufferStream implements StreamInterface
      * @param int $length 最多读取 $length 字节的数据
      * @return string
      */
-    public function read($length)
+    public function read($length): string
     {
         $currentLength = strlen($this->buffer);
 
@@ -171,7 +171,7 @@ class BufferStream implements StreamInterface
      * 返回字符串中的剩余内容
      * @return string
      */
-    public function getContents()
+    public function getContents(): string
     {
         $buffer = $this->buffer;
         $this->buffer = '';
@@ -181,7 +181,7 @@ class BufferStream implements StreamInterface
     /**
      * 获取流中的元数据作为关联数组，或者检索指定的键
      * @param string|null $key 键名
-     * @return array|mixed|null
+     * @return array|int|null
      */
     public function getMetadata($key = null)
     {

@@ -30,7 +30,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
      * @param int             $limit  允许读取的字节数
      * @param int             $offset 偏移
      */
-    public function __construct(StreamInterface $stream, $limit = -1, $offset = 0)
+    public function __construct(StreamInterface $stream, int $limit = -1, int $offset = 0)
     {
         $this->stream = $stream;
         $this->setLimit($limit);
@@ -41,7 +41,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
      * 是否流的结束
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         if ($this->stream->eof()) {
             return true;
@@ -58,7 +58,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
      * 获取流大小
      * @return int|null
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         $length = $this->stream->getSize();
         if (null === $length) {
@@ -96,7 +96,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
      * 流当前指针位置
      * @return int
      */
-    public function tell()
+    public function tell(): int
     {
         return $this->stream->tell() - $this->offset;
     }
@@ -106,7 +106,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
      * @param int $length 字节长度
      * @return string
      */
-    public function read($length)
+    public function read($length): string
     {
         if ($this->limit == -1) {
             return $this->stream->read($length);
@@ -131,7 +131,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
      *   -1 表示不限制
      * @param int $limit 允许读取的字节数
      */
-    protected function setLimit($limit)
+    protected function setLimit(int $limit)
     {
         $this->limit = $limit;
     }
@@ -140,7 +140,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
      * 设置偏移量
      * @param int $offset 偏移量
      */
-    protected function setOffset($offset)
+    protected function setOffset(int $offset)
     {
         $current = $this->stream->tell();
 

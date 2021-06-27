@@ -29,7 +29,7 @@ class LazyOpenStream extends StreamDecorator implements StreamInterface
      * @param string $filename 要打开的文件
      * @param string $mode     打开方式
      */
-    public function __construct($filename, $mode)
+    public function __construct(string $filename, string $mode)
     {
         $this->filename = $filename;
         $this->mode = $mode;
@@ -42,6 +42,7 @@ class LazyOpenStream extends StreamDecorator implements StreamInterface
      */
     protected function createStream()
     {
-        return new Stream($this->filename, $this->mode);
+        $resource = fopen($this->filename, $this->mode);
+        return new Stream($resource);
     }
 }

@@ -3,12 +3,9 @@
 namespace fize\stream;
 
 use Exception;
-use InvalidArgumentException;
-use Iterator;
 use RuntimeException;
 use Psr\Http\Message\StreamInterface;
 use fize\misc\Preg;
-use fize\stream\protocol\PumpStream;
 
 /**
  * 数据流
@@ -19,12 +16,12 @@ class Stream implements StreamInterface
     /**
      * 可读模式
      */
-    const READABLE_MODES = '/r|a\+|ab\+|w\+|wb\+|x\+|xb\+|c\+|cb\+/';
+    private const READABLE_MODES = '/r|a\+|ab\+|w\+|wb\+|x\+|xb\+|c\+|cb\+/';
 
     /**
      * 可写模式
      */
-    const WRITABLE_MODES = '/a|w|r\+|rb\+|rw|x|c/';
+    private const WRITABLE_MODES = '/a|w|r\+|rb\+|rw|x|c/';
 
     /**
      * @var resource 资源流上下文
@@ -63,26 +60,20 @@ class Stream implements StreamInterface
 
     /**
      * 初始化
-     * @param resource|string $resource 资源流/数据包/上下文/文件路径
-     * @param string          $mode     打开模式
-     * @param array           $options  附加选项
+     * @param resource $resource 资源流
+     * @param array    $options  附加选项
      */
-    public function __construct($resource, $mode = null, array $options = [])
+    public function __construct($resource, array $options = [])
     {
-        if (is_resource($resource)) {
-            $this->context = $resource;
-        } else {
-            $this->context = fopen($resource, $mode);
-        }
-
+        $this->context = $resource;
         if (isset($options['size'])) {
             $this->size = $options['size'];
         }
-        $this->customMetadata = isset($options['metadata']) ? $options['metadata'] : [];
+        $this->customMetadata = $options['metadata'] ?? [];
         $meta = $this->getMetaData();
         $this->seekable = $meta['seekable'];
-        $this->readable = Preg::match(self::READABLE_MODES, $meta['mode']) ? true : false;
-        $this->writable = Preg::match(self::WRITABLE_MODES, $meta['mode']) ? true : false;
+        $this->readable = (bool)Preg::match(self::READABLE_MODES, $meta['mode']);
+        $this->writable = (bool)Preg::match(self::WRITABLE_MODES, $meta['mode']);
         $this->uri = $this->getMetadata('uri');
     }
 
@@ -145,7 +136,7 @@ class Stream implements StreamInterface
      * 如果可知，返回以字节为单位的大小，如果未知返回 `null`。
      * @return int|null
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         if ($this->size !== null) {
             return $this->size;
@@ -172,7 +163,7 @@ class Stream implements StreamInterface
      * 返回当前读/写的指针位置
      * @return int
      */
-    public function tell()
+    public function tell(): int
     {
         if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
@@ -191,7 +182,7 @@ class Stream implements StreamInterface
      * 是否位于流的末尾
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
@@ -204,7 +195,7 @@ class Stream implements StreamInterface
      * 返回流是否可随机读取
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return $this->seekable;
     }
@@ -239,7 +230,7 @@ class Stream implements StreamInterface
      * 返回流是否可写
      * @return bool
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return $this->writable;
     }
@@ -249,7 +240,7 @@ class Stream implements StreamInterface
      * @param string $string 要写入流的数据
      * @return int 返回写入流的字节数
      */
-    public function write($string)
+    public function write($string): int
     {
         if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
@@ -272,7 +263,7 @@ class Stream implements StreamInterface
      * 返回流是否可读
      * @return bool
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         return $this->readable;
     }
@@ -282,7 +273,7 @@ class Stream implements StreamInterface
      * @param int $length 最多读取 $length 字节的数据
      * @return string
      */
-    public function read($length)
+    public function read($length): string
     {
         if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
@@ -310,7 +301,7 @@ class Stream implements StreamInterface
      * 返回字符串中的剩余内容
      * @return string
      */
-    public function getContents()
+    public function getContents(): string
     {
         if (!isset($this->context)) {
             throw new RuntimeException('Stream is detached');
@@ -340,58 +331,7 @@ class Stream implements StreamInterface
             return $this->customMetadata[$key];
         }
         $meta = stream_get_meta_data($this->context);
-        return isset($meta[$key]) ? $meta[$key] : null;
-    }
-
-    /**
-     * 创建流
-     * @param mixed $resource 资源
-     * @param array $options  选项
-     * @return StreamInterface
-     */
-    public static function create($resource = '', array $options = [])
-    {
-        if (is_scalar($resource)) {
-            $file = fopen('php://temp', 'r+');
-            if ($resource !== '') {
-                fwrite($file, $resource);
-                fseek($file, 0);
-            }
-            return new Stream($file, $options);
-        }
-
-        if (is_null($resource)) {
-            return new Stream('php://temp', 'r+', $options);
-        }
-
-        if (is_resource($resource)) {
-            return new Stream($resource, $options);
-        }
-
-        if ($resource instanceof StreamInterface) {
-            return $resource;
-        }
-
-        if ($resource instanceof Iterator) {
-            return new PumpStream(function () use ($resource) {
-                if (!$resource->valid()) {
-                    return false;
-                }
-                $result = $resource->current();
-                $resource->next();
-                return $result;
-            }, $options);
-        }
-
-        if (is_object($resource) && method_exists($resource, '__toString')) {
-            return self::create((string)$resource, $options);
-        }
-
-        if (is_callable($resource)) {
-            return new PumpStream($resource, $options);
-        }
-
-        throw new InvalidArgumentException('Invalid resource type: ' . gettype($resource));
+        return $meta[$key] ?? null;
     }
 
     /**
@@ -400,7 +340,7 @@ class Stream implements StreamInterface
      * @param int             $maxLen 最长字节数，-1表示不限制
      * @return string
      */
-    public static function copyToString(StreamInterface $stream, $maxLen = -1)
+    public static function copyToString(StreamInterface $stream, int $maxLen = -1): string
     {
         $buffer = '';
 
@@ -434,7 +374,7 @@ class Stream implements StreamInterface
      * @param StreamInterface $dest   目标
      * @param int             $maxLen 直到指定的数字为止字节已被读取
      */
-    public static function copyToStream(StreamInterface $source, StreamInterface $dest, $maxLen = -1)
+    public static function copyToStream(StreamInterface $source, StreamInterface $dest, int $maxLen = -1)
     {
         $bufferSize = 8192;
 
@@ -456,5 +396,16 @@ class Stream implements StreamInterface
                 $dest->write($buf);
             }
         }
+    }
+
+    /**
+     * 创建临时流
+     * @param array $options 选项
+     * @return StreamInterface
+     */
+    public static function createTemp(array $options = []): StreamInterface
+    {
+        $resource = fopen('php://temp', 'r+');
+        return new static($resource, $options);
     }
 }

@@ -102,7 +102,7 @@ class AppendStream implements StreamInterface
      * 如果可知，返回以字节为单位的大小
      * @return int|null 未知返回 null
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         $size = 0;
 
@@ -121,7 +121,7 @@ class AppendStream implements StreamInterface
      * 返回当前读/写的指针位置
      * @return int
      */
-    public function tell()
+    public function tell(): int
     {
         return $this->pos;
     }
@@ -130,7 +130,7 @@ class AppendStream implements StreamInterface
      * 是否位于流的末尾
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         if (!$this->streams) {
             return true;
@@ -142,7 +142,7 @@ class AppendStream implements StreamInterface
      * 返回流是否可随机读取
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return $this->seekable;
     }
@@ -190,7 +190,7 @@ class AppendStream implements StreamInterface
     /**
      * 返回流是否可写
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return false;
     }
@@ -208,7 +208,7 @@ class AppendStream implements StreamInterface
      * 返回流是否可读
      * @return bool
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         return true;
     }
@@ -218,7 +218,7 @@ class AppendStream implements StreamInterface
      * @param int $length 最多读取 $length 字节的数据
      * @return string
      */
-    public function read($length)
+    public function read($length): string
     {
         $buffer = '';
         $total = count($this->streams) - 1;
@@ -256,7 +256,7 @@ class AppendStream implements StreamInterface
      * 返回字符串中的剩余内容
      * @return string
      */
-    public function getContents()
+    public function getContents(): string
     {
         return Stream::copyToString($this);
     }
@@ -266,7 +266,7 @@ class AppendStream implements StreamInterface
      * @param string|null $key 键名
      * @return array|null
      */
-    public function getMetadata($key = null)
+    public function getMetadata($key = null): ?array
     {
         return $key ? null : [];
     }

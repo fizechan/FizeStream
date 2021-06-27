@@ -89,7 +89,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * 如果可知，返回以字节为单位的大小，如果未知返回 `null`。
      * @return int|null
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return call_user_func($this->methods['getSize']);
     }
@@ -98,7 +98,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * 返回当前读/写的指针位置
      * @return int
      */
-    public function tell()
+    public function tell(): int
     {
         return call_user_func($this->methods['tell']);
     }
@@ -107,7 +107,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * 是否位于流的末尾
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         return call_user_func($this->methods['eof']);
     }
@@ -116,7 +116,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * 返回流是否可随机读取
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return call_user_func($this->methods['isSeekable']);
     }
@@ -143,7 +143,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * 返回流是否可写
      * @return bool
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return call_user_func($this->methods['isWritable']);
     }
@@ -153,7 +153,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * @param string $string 要写入流的数据
      * @return int 返回写入流的字节数
      */
-    public function write($string)
+    public function write($string): int
     {
         return call_user_func($this->methods['write'], $string);
     }
@@ -162,7 +162,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * 返回流是否可读
      * @return bool
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         return call_user_func($this->methods['isReadable']);
     }
@@ -172,7 +172,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * @param int $length 最多读取 $length 字节的数据
      * @return string
      */
-    public function read($length)
+    public function read($length): string
     {
         return call_user_func($this->methods['read'], $length);
     }
@@ -181,7 +181,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * 返回字符串中的剩余内容
      * @return string
      */
-    public function getContents()
+    public function getContents(): string
     {
         return call_user_func($this->methods['getContents']);
     }
@@ -202,7 +202,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * @param array           $methods 自定义功能
      * @return static
      */
-    public static function decorate(StreamInterface $stream, array $methods)
+    public static function decorate(StreamInterface $stream, array $methods): FnStream
     {
         foreach (array_diff(self::$slots, array_keys($methods)) as $diff) {
             $methods[$diff] = [$stream, $diff];

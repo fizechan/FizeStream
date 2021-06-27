@@ -35,7 +35,7 @@ class NoSeekStream extends StreamDecorator implements StreamInterface
      * 返回流是否可随机读取
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return false;
     }

@@ -1,6 +1,6 @@
 <?php
 
-
+use fize\stream\Stream;
 use fize\stream\StreamFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -50,5 +50,87 @@ class TestStreamFactory extends TestCase
         self::assertTrue($readble);
         $content = $stream->getContents();
         var_dump($content);
+    }
+
+    public function testCreateStreamFromIterator()
+    {
+        $it = new MyIterator();
+        $factory = new StreamFactory();
+        $stream = $factory->createStreamFromIterator($it);
+        $content = $stream->getContents();
+        var_dump($content);
+        self::assertEquals('firstelementsecondelementlastelement', $content);
+    }
+
+    public function testCreateStreamFromObject()
+    {
+        $factory = new StreamFactory();
+        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
+        $stream = new Stream($resource);
+        $stream = $factory->createStreamFromObject($stream);
+        var_dump($stream);
+        $content = $stream->getContents();
+        var_dump($content);
+        self::assertEquals('0123456789', $content);
+    }
+
+    public function testCreatStreamFromCallable()
+    {
+        $factory = new StreamFactory();
+        $stream = $factory->creatStreamFromCallable(function ($length) {
+            if($length >= 10) {
+                return null;
+            }
+            return (string)$length;
+        });
+        $content = $stream->getContents();
+        var_dump($content);
+        self::assertEquals('0123456789', $content);
+    }
+}
+
+class MyIterator implements Iterator
+{
+    private $position;
+
+    private $array = [
+        "firstelement",
+        "secondelement",
+        "lastelement",
+    ];
+
+    public function __construct()
+    {
+        $this->position = 0;
+    }
+
+    public function rewind()
+    {
+        var_dump(__METHOD__);
+        $this->position = 0;
+    }
+
+    public function current()
+    {
+        var_dump(__METHOD__);
+        return $this->array[$this->position];
+    }
+
+    public function key()
+    {
+        var_dump(__METHOD__);
+        return $this->position;
+    }
+
+    public function next()
+    {
+        var_dump(__METHOD__);
+        ++$this->position;
+    }
+
+    public function valid(): bool
+    {
+        var_dump(__METHOD__);
+        return isset($this->array[$this->position]);
     }
 }

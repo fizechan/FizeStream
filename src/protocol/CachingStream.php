@@ -4,8 +4,8 @@ namespace fize\stream\protocol;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use fize\stream\StreamDecorator;
 use fize\stream\Stream;
+use fize\stream\StreamDecorator;
 
 /**
  * 可缓存流
@@ -33,7 +33,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
     public function __construct(StreamInterface $stream, StreamInterface $target = null)
     {
         $this->remoteStream = $stream;
-        $this->stream = $target ?: new Stream('php://temp', 'r+');
+        $this->stream = $target ?: Stream::createTemp();
     }
 
     /**
@@ -51,7 +51,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * 如果可知，返回以字节为单位的大小
      * @return int|null 未知返回 null
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return max($this->stream->getSize(), $this->remoteStream->getSize());
     }
@@ -60,7 +60,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * 是否位于流的末尾
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         return $this->stream->eof() && $this->remoteStream->eof();
     }
@@ -103,7 +103,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * @param string $string 要写入流的数据
      * @return int 返回写入流的字节数
      */
-    public function write($string)
+    public function write($string): int
     {
         $overflow = strlen($string) + $this->tell() - $this->remoteStream->tell();
         if ($overflow > 0) {
@@ -118,7 +118,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * @param int $length 最多读取 $length 字节的数据
      * @return string
      */
-    public function read($length)
+    public function read($length): string
     {
         $data = $this->stream->read($length);
         $remaining = $length - strlen($data);
@@ -144,7 +144,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * 缓存当前流
      * @return int 返回已读取字节数
      */
-    private function cacheEntireStream()
+    private function cacheEntireStream(): int
     {
         $target = new FnStream(['write' => 'strlen']);
         Stream::copyToStream($this, $target);

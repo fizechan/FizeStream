@@ -35,7 +35,7 @@ class InflateStream extends StreamDecorator implements StreamInterface
      * @param string          $header 文件头
      * @return int
      */
-    private function getLengthOfPossibleFilenameHeader(StreamInterface $stream, $header)
+    private function getLengthOfPossibleFilenameHeader(StreamInterface $stream, string $header): int
     {
         $filename_header_length = 0;
 

@@ -2,6 +2,9 @@
 
 namespace fize\stream;
 
+use InvalidArgumentException;
+use Iterator;
+use fize\stream\protocol\PumpStream;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -18,7 +21,12 @@ class StreamFactory implements StreamFactoryInterface
      */
     public function createStream(string $content = ''): StreamInterface
     {
-        return Stream::create($content);
+        $file = fopen('php://temp', 'r+');
+        if ($content !== '') {
+            fwrite($file, $content);
+            fseek($file, 0);
+        }
+        return new Stream($file);
     }
 
     /**
@@ -29,7 +37,8 @@ class StreamFactory implements StreamFactoryInterface
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
-        return new Stream($filename, $mode);
+        $resource = fopen($filename, $mode);
+        return new Stream($resource);
     }
 
     /**
@@ -39,6 +48,51 @@ class StreamFactory implements StreamFactoryInterface
      */
     public function createStreamFromResource($resource): StreamInterface
     {
-        return Stream::create($resource);
+        return new Stream($resource);
+    }
+
+    /**
+     * 通过迭代器创建一个流
+     * @param Iterator $iterator 迭代器
+     * @param array    $options  选项
+     * @return StreamInterface
+     */
+    public function createStreamFromIterator(Iterator $iterator, array $options = []): StreamInterface
+    {
+        return new PumpStream(function () use ($iterator) {
+            if (!$iterator->valid()) {
+                return false;
+            }
+            $result = $iterator->current();
+            $iterator->next();
+            return $result;
+        }, $options);
+    }
+
+    /**
+     * 通过对象创建一个流
+     * @param mixed $object 任意实现了 StreamInterface 接口 或者 __toString 方法的对象
+     * @return StreamInterface
+     */
+    public function createStreamFromObject($object): StreamInterface
+    {
+        if ($object instanceof StreamInterface) {
+            return $object;
+        }
+        if (!method_exists($object, '__toString')) {
+            throw new InvalidArgumentException('Invalid resource type: ' . gettype($object));
+        }
+        return $this->createStream((string)$object);
+    }
+
+    /**
+     * 通过回调函数创建一个流
+     * @param callable $function 回调函数
+     * @param array    $options  选项
+     * @return StreamInterface
+     */
+    public function creatStreamFromCallable(callable $function, array $options = []): StreamInterface
+    {
+        return new PumpStream($function, $options);
     }
 }

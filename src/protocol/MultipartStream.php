@@ -4,8 +4,8 @@ namespace fize\stream\protocol;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use fize\stream\Stream;
 use fize\stream\StreamDecorator;
+use fize\stream\StreamFactory;
 
 /**
  * 多组件流
@@ -21,13 +21,19 @@ class MultipartStream extends StreamDecorator implements StreamInterface
     private $boundary;
 
     /**
-     * 构造
-     * @param array  $elements 组件
-     * @param string $boundary 边界分隔符
+     * @var StreamFactory 流工厂
      */
-    public function __construct(array $elements = [], $boundary = null)
+    protected $factory;
+
+    /**
+     * 构造
+     * @param array       $elements 组件
+     * @param string|null $boundary 边界分隔符
+     */
+    public function __construct(array $elements = [], string $boundary = null)
     {
         $this->boundary = $boundary ?: sha1(uniqid('', true));
+        $this->factory = new StreamFactory();
         $this->stream = $this->createStream($elements);
     }
 
@@ -35,7 +41,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * 获取边界分隔符
      * @return string
      */
-    public function getBoundary()
+    public function getBoundary(): string
     {
         return $this->boundary;
     }
@@ -44,7 +50,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * 返回流是否可写
      * @return bool
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return false;
     }
@@ -54,7 +60,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * @param array $elements 各组件
      * @return StreamInterface
      */
-    protected function createStream(array $elements)
+    protected function createStream(array $elements): StreamInterface
     {
         $stream = new AppendStream();
 
@@ -63,7 +69,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
         }
 
         // Add the trailing boundary with CRLF
-        $stream->addStream(Stream::create("--{$this->boundary}--\r\n"));
+        $stream->addStream($this->factory->createStream("--$this->boundary--\r\n"));
 
         return $stream;
     }
@@ -77,11 +83,11 @@ class MultipartStream extends StreamDecorator implements StreamInterface
     {
         foreach (['contents', 'name'] as $key) {
             if (!array_key_exists($key, $element)) {
-                throw new InvalidArgumentException("A '{$key}' key is required");
+                throw new InvalidArgumentException("A '$key' key is required");
             }
         }
 
-        $element['contents'] = Stream::create($element['contents']);
+        $element['contents'] = $this->factory->createStream($element['contents']);
 
         if (isset($element['filename']) && empty($element['filename'])) {
             $uri = $element['contents']->getMetadata('uri');
@@ -93,13 +99,13 @@ class MultipartStream extends StreamDecorator implements StreamInterface
         list($body, $headers) = $this->createElement(
             $element['name'],
             $element['contents'],
-            isset($element['filename']) ? $element['filename'] : null,
-            isset($element['headers']) ? $element['headers'] : []
+            $element['filename'] ?? null,
+            $element['headers'] ?? []
         );
 
-        $stream->addStream(Stream::create($this->getHeaders($headers)));
+        $stream->addStream($this->factory->createStream($this->getHeaders($headers)));
         $stream->addStream($body);
-        $stream->addStream(Stream::create("\r\n"));
+        $stream->addStream($this->factory->createStream("\r\n"));
     }
 
     /**
@@ -110,7 +116,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * @param array           $headers  头信息
      * @return array [$stream, $headers]
      */
-    private function createElement($name, StreamInterface $stream, $filename, array $headers)
+    private function createElement(string $name, StreamInterface $stream, string $filename, array $headers): array
     {
         // Set a default content-disposition header if one was no provided
         $disposition = self::getHeader($headers, 'content-disposition');
@@ -118,7 +124,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
             if ($filename === '0' || $filename) {
                 $headers['Content-Disposition'] = sprintf('form-data; name="%s"; filename="%s"', $name, basename($filename));
             } else {
-                $headers['Content-Disposition'] = "form-data; name=\"{$name}\"";
+                $headers['Content-Disposition'] = "form-data; name=\"$name\"";
             }
         }
 
@@ -147,7 +153,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * @param string $key     键名
      * @return mixed|null
      */
-    private static function getHeader(array $headers, $key)
+    private static function getHeader(array $headers, string $key)
     {
         $lowercaseHeader = strtolower($key);
         foreach ($headers as $k => $v) {
@@ -164,7 +170,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * @param string $filename 文件名
      * @return string|null
      */
-    private static function mimetypeFromFilename($filename)
+    private static function mimetypeFromFilename(string $filename): ?string
     {
         return self::mimetypeFromExtension(pathinfo($filename, PATHINFO_EXTENSION));
     }
@@ -175,7 +181,7 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * @return string|null
      * @link http://svn.apache.org/repos/asf/httpd/httpd/branches/1.3.x/conf/mime.types
      */
-    private static function mimetypeFromExtension($extension)
+    private static function mimetypeFromExtension(string $extension): ?string
     {
         static $mimetypes = [
             '3gp'     => 'video/3gpp',
@@ -280,10 +286,8 @@ class MultipartStream extends StreamDecorator implements StreamInterface
             'yml'     => 'text/yaml',
             'zip'     => 'application/zip',
         ];
-
         $extension = strtolower($extension);
-
-        return isset($mimetypes[$extension]) ? $mimetypes[$extension] : null;
+        return $mimetypes[$extension] ?? null;
     }
 
     /**
@@ -291,13 +295,12 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * @param array $headers 头信息
      * @return string
      */
-    private function getHeaders(array $headers)
+    private function getHeaders(array $headers): string
     {
         $str = '';
         foreach ($headers as $key => $value) {
-            $str .= "{$key}: {$value}\r\n";
+            $str .= "$key: $value\r\n";
         }
-
-        return "--{$this->boundary}\r\n" . trim($str) . "\r\n\r\n";
+        return "--$this->boundary\r\n" . trim($str) . "\r\n\r\n";
     }
 }
