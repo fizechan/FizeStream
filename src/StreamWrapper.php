@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * 流包装器
+ * 自定义流包装器
  */
 class StreamWrapper
 {
@@ -32,7 +32,7 @@ class StreamWrapper
     protected $path;
 
     /**
-     * @var array 选项
+     * @var int 选项
      */
     protected $options;
 
@@ -40,6 +40,17 @@ class StreamWrapper
      * @var int 标识
      */
     protected $flags;
+
+    /**
+     * 返回封装流
+     * @param StreamInterface $stream 流对象
+     * @return Stream
+     */
+    public static function get(StreamInterface $stream): Stream
+    {
+        $resource = self::getResource($stream);
+        return new Stream($resource);
+    }
 
     /**
      * 获取流资源
@@ -58,7 +69,7 @@ class StreamWrapper
             throw new InvalidArgumentException('The stream must be readable, writable, or both.');
         }
 
-        return fopen('fize://stream', $mode, null, self::createStreamContext($stream));
+        return fopen('fize://stream', $mode, false, self::createStreamContext($stream));
     }
 
     /**
@@ -76,7 +87,7 @@ class StreamWrapper
      * @param StreamInterface $stream 流对象
      * @return resource
      */
-    public static function createStreamContext(StreamInterface $stream)
+    protected static function createStreamContext(StreamInterface $stream)
     {
         return stream_context_create([
             'fize' => ['stream' => $stream]
@@ -85,24 +96,24 @@ class StreamWrapper
 
     /**
      * 打开文件或者URL
-     * @param string $path    文件路径或者URL
-     * @param string $mode    模式
-     * @param array  $options 选项
-     * @param string $opened_path
-     * @return bool 如果路径被成功打开，该值返回实际路径
+     * @param string      $path        文件路径或者URL
+     * @param string      $mode        模式
+     * @param int         $options     选项
+     * @param string|null $opened_path 如果路径被成功打开，该值返回实际路径
+     * @return bool
      */
-    public function stream_open(string $path, string $mode, array $options, string &$opened_path): bool
+    public function stream_open(string $path, string $mode, int $options, string &$opened_path = null): bool
     {
         $this->path = $path;
         $this->options = $options;
-        $options = stream_context_get_options($this->context);
+        $sc_options = stream_context_get_options($this->context);
 
-        if (!isset($options['fize']['stream'])) {
+        if (!isset($sc_options['fize']['stream'])) {
             return false;
         }
 
         $this->mode = $mode;
-        $this->stream = $options['fize']['stream'];
+        $this->stream = $sc_options['fize']['stream'];
         $opened_path = realpath($path);
         return true;
     }
@@ -154,7 +165,6 @@ class StreamWrapper
     public function stream_seek(int $offset, int $whence): bool
     {
         $this->stream->seek($offset, $whence);
-
         return true;
     }
 
@@ -215,7 +225,6 @@ class StreamWrapper
     {
         $this->path = $path;
         $this->flags = $flags;
-
         return [
             'dev'     => 0,
             'ino'     => 0,

@@ -9,42 +9,38 @@ use PHPUnit\Framework\TestCase;
 class TestStreamWrapper extends TestCase
 {
 
+    public function testGet()
+    {
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'w+');
+        $stream = new Stream($resource);
+        $stream2 = StreamWrapper::get($stream);
+        var_dump($stream2);
+        self::assertIsObject($stream2);
+    }
+
     public function testGetResource()
     {
-        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'w+');
+        $stream = new Stream($resource);
         $resource = StreamWrapper::getResource($stream);
-        var_dump($resource);
-        self::assertIsResource($resource);
-    }
-
-    public function testRegister()
-    {
-        StreamWrapper::register();
-        self::assertTrue(true);
-    }
-
-    public function testCreateStreamContext()
-    {
-        $stream = new Stream(__DIR__ . '/../temp/stream.txt', 'r');
-        $resource = StreamWrapper::createStreamContext($stream);
         var_dump($resource);
         self::assertIsResource($resource);
     }
 
     public function testStream_open()
     {
-        $stream = new Stream(__DIR__ . '/../temp/stream3.txt', 'w+');
-        $resource = StreamWrapper::getResource($stream);
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'w+');
         $stream = new Stream($resource);
+        $stream = StreamWrapper::get($stream);
         var_dump($stream);
         self::assertIsObject($stream);
     }
 
     public function testStream_read()
     {
-        $stream = new Stream(__DIR__ . '/../temp/stream3.txt', 'r');
-        $resource = StreamWrapper::getResource($stream);
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'r');
         $stream = new Stream($resource);
+        $stream = StreamWrapper::get($stream);
         $content = $stream->read(6);
         var_dump($content);
         self::assertEquals('123456', $content);
@@ -52,9 +48,9 @@ class TestStreamWrapper extends TestCase
 
     public function testStream_write()
     {
-        $stream = new Stream(__DIR__ . '/../temp/stream3.txt', 'w+');
-        $resource = StreamWrapper::getResource($stream);
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'w+');
         $stream = new Stream($resource);
+        $stream = StreamWrapper::get($stream);
         $len = $stream->write('123');
         var_dump($len);
         self::assertEquals(3, $len);
@@ -62,9 +58,9 @@ class TestStreamWrapper extends TestCase
 
     public function testStream_tell()
     {
-        $stream = new Stream(__DIR__ . '/../temp/stream3.txt', 'w+');
-        $resource = StreamWrapper::getResource($stream);
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'w+');
         $stream = new Stream($resource);
+        $stream = StreamWrapper::get($stream);
         $stream->write('123');
         $tell = $stream->tell();
         var_dump($tell);
@@ -73,9 +69,9 @@ class TestStreamWrapper extends TestCase
 
     public function testStream_eof()
     {
-        $stream = new Stream(__DIR__ . '/../temp/stream3.txt', 'r');
-        $resource = StreamWrapper::getResource($stream);
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'r');
         $stream = new Stream($resource);
+        $stream = StreamWrapper::get($stream);
         $eof = $stream->eof();
         var_dump($eof);
         self::assertFalse($eof);
@@ -83,9 +79,9 @@ class TestStreamWrapper extends TestCase
 
     public function testStream_seek()
     {
-        $stream = new Stream(__DIR__ . '/../temp/stream3.txt', 'r');
-        $resource = StreamWrapper::getResource($stream);
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'r');
         $stream = new Stream($resource);
+        $stream = StreamWrapper::get($stream);
         $stream->seek(2);
         self::assertIsObject($stream);
     }
@@ -93,7 +89,8 @@ class TestStreamWrapper extends TestCase
     public function testStream_cast()
     {
         StreamWrapper::register();
-        $stream = new Stream(__DIR__ . '/../temp/stream3.txt', 'r');
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'r');
+        $stream = new Stream($resource);
         $stream = fopen('fize://stream', 'r', null, stream_context_create(['fize' => ['stream' => $stream]]));
 
         //开启以下注释可以看到效果
@@ -109,7 +106,8 @@ class TestStreamWrapper extends TestCase
     public function testStream_stat()
     {
         StreamWrapper::register();
-        $stream = new Stream(__DIR__ . '/../temp/stream3.txt', 'r');
+        $resource = fopen(__DIR__ . '/../temp/stream3.txt', 'r');
+        $stream = new Stream($resource);
         $stream = fopen('fize://stream', 'r', null, stream_context_create(['fize' => ['stream' => $stream]]));
         $stat = fstat($stream);
         var_dump($stat);
