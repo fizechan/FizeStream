@@ -11,7 +11,8 @@ class TestLimitStream extends TestCase
 
     public function test__construct()
     {
-        $stream = new Stream('php://temp', 'r+');
+        $resource = fopen('php://temp', 'r+');
+        $stream = new Stream($resource);
         $stream->write('123456789');
         $stream = new LimitStream($stream, 2);
         var_dump($stream);
@@ -20,7 +21,8 @@ class TestLimitStream extends TestCase
 
     public function testEof()
     {
-        $stream = new Stream('php://temp', 'r+');
+        $resource = fopen('php://temp', 'r+');
+        $stream = new Stream($resource);
         $stream->write('123456789');
         $stream = new LimitStream($stream, 2);
         $stream->seek(3);
@@ -30,7 +32,8 @@ class TestLimitStream extends TestCase
 
     public function testGetSize()
     {
-        $stream = new Stream('php://temp', 'r+');
+        $resource = fopen('php://temp', 'r+');
+        $stream = new Stream($resource);
         $stream->write('123456789');
         $stream = new LimitStream($stream, 2);
         $size = $stream->getSize();
@@ -39,7 +42,8 @@ class TestLimitStream extends TestCase
 
     public function testSeek()
     {
-        $stream = new Stream('php://temp', 'r+');
+        $resource = fopen('php://temp', 'r+');
+        $stream = new Stream($resource);
         $stream->write('123456789');
         $stream = new LimitStream($stream, 2);
         $stream->seek(5);
@@ -50,7 +54,8 @@ class TestLimitStream extends TestCase
 
     public function testTell()
     {
-        $stream = new Stream('php://temp', 'r+');
+        $resource = fopen('php://temp', 'r+');
+        $stream = new Stream($resource);
         $stream->write('123456789');
         $stream = new LimitStream($stream, 2);
         $stream->seek(5);
@@ -62,7 +67,8 @@ class TestLimitStream extends TestCase
 
     public function testRead()
     {
-        $stream = new Stream('php://temp', 'r+');
+        $resource = fopen('php://temp', 'r+');
+        $stream = new Stream($resource);
         $stream->write('123456789');
         $stream = new LimitStream($stream, 2);
         $str = $stream->read(1);

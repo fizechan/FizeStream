@@ -11,13 +11,15 @@ class TestDroppingStream extends TestCase
 
     public function test__construct()
     {
-        $stream = new DroppingStream(new Stream('php://temp', 'r+'), 5);
+        $resource = fopen('php://temp', 'r+');
+        $stream = new DroppingStream(new Stream($resource), 5);
         self::assertIsObject($stream);
     }
 
     public function testWrite()
     {
-        $stream = new DroppingStream(new Stream('php://temp', 'r+'), 5);
+        $resource = fopen('php://temp', 'r+');
+        $stream = new DroppingStream(new Stream($resource), 5);
         $stream->write('123456789');
         $stream->rewind();
         $content = $stream->getContents();

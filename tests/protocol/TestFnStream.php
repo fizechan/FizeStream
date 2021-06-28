@@ -237,7 +237,8 @@ class TestFnStream extends TestCase
 
     public function testDecorate()
     {
-        $stream1 = new Stream(__DIR__ . '/../../temp/stream.txt', 'r');
+        $resource = fopen(__DIR__ . '/../../temp/stream.txt', 'r');
+        $stream1 = new Stream($resource);
         $bool1 = $stream1->isWritable();
         self::assertFalse($bool1);
         $methods = [

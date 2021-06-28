@@ -28,7 +28,8 @@ class TestCachingStream extends TestCase
 
     public function testGetSize()
     {
-        $stream = new CachingStream(new Stream('php://temp', 'r+'));
+        $resource = fopen('php://temp', 'r+');
+        $stream = new CachingStream(new Stream($resource));
         $stream->write('0123456789');
         $size = $stream->getSize();
         var_dump($size);
@@ -37,7 +38,8 @@ class TestCachingStream extends TestCase
 
     public function testEof()
     {
-        $stream = new CachingStream(new Stream('php://temp', 'r+'));
+        $resource = fopen('php://temp', 'r+');
+        $stream = new CachingStream(new Stream($resource));
         $stream->write('0123456789');
         $stream->seek(11);
         $iseof = $stream->eof();
@@ -48,7 +50,7 @@ class TestCachingStream extends TestCase
     public function testSeek()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);
@@ -60,7 +62,7 @@ class TestCachingStream extends TestCase
     public function testWrite()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);
@@ -72,7 +74,7 @@ class TestCachingStream extends TestCase
     public function testRead()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);
@@ -86,7 +88,7 @@ class TestCachingStream extends TestCase
     public function test__toString()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);
@@ -107,7 +109,7 @@ class TestCachingStream extends TestCase
     public function testTell()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);
@@ -120,7 +122,7 @@ class TestCachingStream extends TestCase
     public function testIsSeekable()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);
@@ -133,7 +135,7 @@ class TestCachingStream extends TestCase
     public function testRewind()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);
@@ -147,7 +149,7 @@ class TestCachingStream extends TestCase
     public function testIsWritable()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);
@@ -158,7 +160,7 @@ class TestCachingStream extends TestCase
     public function testIsReadable()
     {
         $stream = new PumpStream(function ($length) {
-            return "{$length}";
+            return "$length";
         });
         $stream->close();
         $stream = new CachingStream($stream);

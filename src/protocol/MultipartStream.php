@@ -112,11 +112,11 @@ class MultipartStream extends StreamDecorator implements StreamInterface
      * 创建组件
      * @param string          $name     名称
      * @param StreamInterface $stream   流对象
-     * @param string          $filename 文件名
+     * @param string|null          $filename 文件名
      * @param array           $headers  头信息
      * @return array [$stream, $headers]
      */
-    private function createElement(string $name, StreamInterface $stream, string $filename, array $headers): array
+    private function createElement(string $name, StreamInterface $stream, ?string $filename, array $headers): array
     {
         // Set a default content-disposition header if one was no provided
         $disposition = self::getHeader($headers, 'content-disposition');

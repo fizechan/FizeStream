@@ -11,7 +11,8 @@ class TestInflateStream extends TestCase
 
     public function test__construct()
     {
-        $stream = new Stream(__DIR__ . '/../../temp/stream3.txt', 'w+');
+        $resource = fopen(__DIR__ . '/../../temp/stream3.txt', 'w+');
+        $stream = new Stream($resource);
         $stream = new InflateStream($stream);
         var_dump($stream);
         self::assertIsObject($stream);

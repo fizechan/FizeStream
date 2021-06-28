@@ -149,7 +149,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
             if ($this->stream->isSeekable()) {
                 $this->stream->seek($offset);
             } elseif ($current > $offset) {
-                throw new RuntimeException("Could not seek to stream offset {$offset}");
+                throw new RuntimeException("Could not seek to stream offset $offset");
             } else {
                 $this->stream->read($offset - $current);
             }
