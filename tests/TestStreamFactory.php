@@ -77,11 +77,13 @@ class TestStreamFactory extends TestCase
     public function testCreatStreamFromCallable()
     {
         $factory = new StreamFactory();
-        $stream = $factory->creatStreamFromCallable(function ($length) {
-            if($length >= 10) {
-                return null;
+        $fired = false;
+        $stream = $factory->creatStreamFromCallable(function () use (&$fired){
+            if (!$fired) {
+                $fired = true;
+                return '0123456789';
             }
-            return (string)$length;
+            return null;
         });
         $content = $stream->getContents();
         var_dump($content);
