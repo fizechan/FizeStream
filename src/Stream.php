@@ -5,7 +5,6 @@ namespace fize\stream;
 use Exception;
 use RuntimeException;
 use Psr\Http\Message\StreamInterface;
-use fize\misc\Preg;
 
 /**
  * 数据流
@@ -72,8 +71,8 @@ class Stream implements StreamInterface
         $this->customMetadata = $options['metadata'] ?? [];
         $meta = $this->getMetaData();
         $this->seekable = $meta['seekable'];
-        $this->readable = (bool)Preg::match(self::READABLE_MODES, $meta['mode']);
-        $this->writable = (bool)Preg::match(self::WRITABLE_MODES, $meta['mode']);
+        $this->readable = (bool)preg_match(self::READABLE_MODES, $meta['mode']);
+        $this->writable = (bool)preg_match(self::WRITABLE_MODES, $meta['mode']);
         $this->uri = $this->getMetadata('uri');
     }
 
