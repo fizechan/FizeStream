@@ -3,10 +3,10 @@
 namespace fize\stream\protocol;
 
 use Exception;
+use fize\stream\Stream;
 use InvalidArgumentException;
 use RuntimeException;
 use Psr\Http\Message\StreamInterface;
-use fize\stream\Stream;
 
 /**
  * 多流数据流

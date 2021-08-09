@@ -3,8 +3,8 @@
 namespace protocol;
 
 use fize\stream\protocol\AppendStream;
-use fize\stream\StreamFactory;
 use fize\stream\protocol\NoSeekStream;
+use fize\stream\StreamFactory;
 use PHPUnit\Framework\TestCase;
 
 class TestAppendStream extends TestCase

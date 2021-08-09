@@ -11,7 +11,7 @@ class TestPumpStream extends TestCase
     public function test__construct()
     {
         $stream = new PumpStream(function ($length) {
-            if($length >= 10) {
+            if ($length >= 10) {
                 return null;
             }
             return (string)$length;
@@ -23,9 +23,9 @@ class TestPumpStream extends TestCase
     public function test__toString()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -39,9 +39,9 @@ class TestPumpStream extends TestCase
     public function testClose()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -55,9 +55,9 @@ class TestPumpStream extends TestCase
     public function testDetach()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -73,9 +73,9 @@ class TestPumpStream extends TestCase
             'size' => 9  //模拟size
         ];
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -91,9 +91,9 @@ class TestPumpStream extends TestCase
             'size' => 9  //模拟size
         ];
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -109,9 +109,9 @@ class TestPumpStream extends TestCase
     public function testEof()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -126,9 +126,9 @@ class TestPumpStream extends TestCase
     public function testIsSeekable()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -143,9 +143,9 @@ class TestPumpStream extends TestCase
     public function testSeek()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -159,9 +159,9 @@ class TestPumpStream extends TestCase
     public function testRewind()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -175,9 +175,9 @@ class TestPumpStream extends TestCase
     public function testIsWritable()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -190,9 +190,9 @@ class TestPumpStream extends TestCase
     public function testWrite()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -206,9 +206,9 @@ class TestPumpStream extends TestCase
     public function testIsReadable()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -221,9 +221,9 @@ class TestPumpStream extends TestCase
     public function testRead()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -236,9 +236,9 @@ class TestPumpStream extends TestCase
     public function testGetContents()
     {
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;
@@ -256,9 +256,9 @@ class TestPumpStream extends TestCase
             ]  //模拟metadata
         ];
         $once = true;
-        $stream = new PumpStream(function ($length) use (&$once){
+        $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
-            if(!$once) {
+            if (!$once) {
                 return null;  //模拟结束
             }
             $once = false;

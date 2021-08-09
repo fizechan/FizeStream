@@ -2,10 +2,10 @@
 
 namespace fize\stream\protocol;
 
-use Psr\Http\Message\StreamInterface;
 use fize\stream\Stream;
 use fize\stream\StreamDecorator;
 use fize\stream\StreamWrapper;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * 解压流

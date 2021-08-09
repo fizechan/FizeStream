@@ -2,8 +2,8 @@
 
 namespace fize\stream\protocol;
 
-use Psr\Http\Message\StreamInterface;
 use fize\stream\StreamDecorator;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * 丢弃流

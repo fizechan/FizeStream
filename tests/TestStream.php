@@ -1,6 +1,5 @@
 <?php
 
-
 use fize\stream\Stream;
 use PHPUnit\Framework\TestCase;
 
@@ -9,23 +8,23 @@ class TestStream extends TestCase
 
     public function test__construct()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'w+');
-        $stream1 = new Stream($resource);
-        self::assertIsObject($stream1);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'w+');
+        self::assertIsObject($stream);
     }
 
     public function test__destruct()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'w+');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'w+');
         unset($stream);
         self::assertTrue(true);
     }
 
     public function test__toString()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $string = (string)$stream;
         var_dump($string);
         self::assertIsString($string);
@@ -33,16 +32,16 @@ class TestStream extends TestCase
 
     public function testClose()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'w+');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'w+');
         $stream->close();
         self::assertTrue(true);
     }
 
     public function testDetach()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'w+');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'w+');
         $resource = $stream->detach();
         var_dump($resource);
         self::assertTrue(true);
@@ -50,8 +49,8 @@ class TestStream extends TestCase
 
     public function testGetSize()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $size = $stream->getSize();
         var_dump($size);
         self::assertIsInt($size);
@@ -59,8 +58,8 @@ class TestStream extends TestCase
 
     public function testTell()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $pos1 = $stream->tell();
         self::assertEquals(0, $pos1);
         $stream->read(100);
@@ -71,8 +70,8 @@ class TestStream extends TestCase
 
     public function testEof()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $eof1 = $stream->eof();
         self::assertFalse($eof1);
         $stream->getContents();
@@ -82,16 +81,16 @@ class TestStream extends TestCase
 
     public function testIsSeekable()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream1 = new Stream($resource);
+        $stream1 = new Stream();
+        $stream1->open(__DIR__ . '/../temp/stream.txt', 'r');
         $seek1 = $stream1->isSeekable();
         self::assertTrue($seek1);
     }
 
     public function testSeek()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $stream->seek(100);
         $string = $stream->read(10);
         var_dump($string);
@@ -100,8 +99,8 @@ class TestStream extends TestCase
 
     public function testRewind()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $stream->seek(100);
         $string1 = $stream->read(10);
         $stream->rewind();
@@ -113,29 +112,29 @@ class TestStream extends TestCase
 
     public function testIsWritable()
     {
-        $resource1 = fopen(__DIR__ . '/../temp/stream1.txt', 'w');
-        $stream1 = new Stream($resource1);
+        $stream1 = new Stream();
+        $stream1->open(__DIR__ . '/../temp/stream1.txt', 'w');
         $seek1 = $stream1->isWritable();
         self::assertTrue($seek1);
 
-        $resource2 = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream2 = new Stream($resource2);
+        $stream2 = new Stream();
+        $stream2->open(__DIR__ . '/../temp/stream.txt', 'r');
         $seek2 = $stream2->isWritable();
         self::assertFalse($seek2);
     }
 
     public function testWrite()
     {
-        $resource1 = fopen(__DIR__ . '/../temp/stream1.txt', 'w');
-        $stream1 = new Stream($resource1);
+        $stream1 = new Stream();
+        $stream1->open(__DIR__ . '/../temp/stream1.txt', 'w');
         $ink1 = $stream1->write('哈哈哈哈！~！~！');
         self::assertIsInt($ink1);
     }
 
     public function testIsReadable()
     {
-        $resource1 = fopen(__DIR__ . '/../temp/stream1.txt', 'w');
-        $stream1 = new Stream($resource1);
+        $stream1 = new Stream();
+        $stream1->open(__DIR__ . '/../temp/stream1.txt', 'w');
         $result1 = $stream1->isReadable();
         self::assertFalse($result1);
 
@@ -147,8 +146,8 @@ class TestStream extends TestCase
 
     public function testRead()
     {
-        $resource2 = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream2 = new Stream($resource2);
+        $stream2 = new Stream();
+        $stream2->open(__DIR__ . '/../temp/stream.txt', 'r');
         $string2 = $stream2->read(100);
         var_dump($string2);
         self::assertIsString($string2);
@@ -156,8 +155,8 @@ class TestStream extends TestCase
 
     public function testGetContents()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $contents = $stream->getContents();
         var_dump($contents);
         self::assertIsString($contents);
@@ -165,8 +164,8 @@ class TestStream extends TestCase
 
     public function testGetMetadata()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $metas = $stream->getMetadata();
         var_dump($metas);
         self::assertIsArray($metas);
@@ -179,8 +178,8 @@ class TestStream extends TestCase
 
     public function testCopyToString()
     {
-        $resource = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream = new Stream($resource);
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'r');
         $string = Stream::copyToString($stream);
         var_dump($string);
         self::assertIsString($string);
@@ -188,10 +187,10 @@ class TestStream extends TestCase
 
     public function testCopyToStream()
     {
-        $resource1 = fopen(__DIR__ . '/../temp/stream.txt', 'r');
-        $stream1 = new Stream($resource1);
-        $resource2 = fopen(__DIR__ . '/../temp/stream2.txt', 'w+');
-        $stream2 = new Stream($resource2);
+        $stream1 = new Stream();
+        $stream1->open(__DIR__ . '/../temp/stream.txt', 'r');
+        $stream2 = new Stream();
+        $stream2->open(__DIR__ . '/../temp/stream2.txt', 'w+');
         Stream::copyToStream($stream1, $stream2);
         self::assertTrue(true);
     }

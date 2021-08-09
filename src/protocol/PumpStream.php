@@ -3,9 +3,9 @@
 namespace fize\stream\protocol;
 
 use Exception;
-use RuntimeException;
-use Psr\Http\Message\StreamInterface;
 use fize\stream\Stream;
+use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 /**
  * PHP 数据流

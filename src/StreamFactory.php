@@ -2,9 +2,9 @@
 
 namespace fize\stream;
 
+use fize\stream\protocol\PumpStream;
 use InvalidArgumentException;
 use Iterator;
-use fize\stream\protocol\PumpStream;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 

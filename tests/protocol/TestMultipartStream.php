@@ -13,11 +13,11 @@ class TestMultipartStream extends TestCase
         $elements = [
             [
                 'contents' => 'for test1',
-                'name' => 'test1'
+                'name'     => 'test1'
             ],
             [
                 'contents' => 'for test2',
-                'name' => 'test2'
+                'name'     => 'test2'
             ]
         ];
         $boundary = "\r\n\r\n";
@@ -31,11 +31,11 @@ class TestMultipartStream extends TestCase
         $elements = [
             [
                 'contents' => 'for test1',
-                'name' => 'test1'
+                'name'     => 'test1'
             ],
             [
                 'contents' => 'for test2',
-                'name' => 'test2'
+                'name'     => 'test2'
             ]
         ];
         $boundary = "|";
@@ -49,11 +49,11 @@ class TestMultipartStream extends TestCase
         $elements = [
             [
                 'contents' => 'for test1',
-                'name' => 'test1'
+                'name'     => 'test1'
             ],
             [
                 'contents' => 'for test2',
-                'name' => 'test2'
+                'name'     => 'test2'
             ]
         ];
         $boundary = "|";

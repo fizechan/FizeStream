@@ -2,10 +2,10 @@
 
 namespace fize\stream\protocol;
 
-use InvalidArgumentException;
-use Psr\Http\Message\StreamInterface;
 use fize\stream\Stream;
 use fize\stream\StreamDecorator;
+use InvalidArgumentException;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * 可缓存流

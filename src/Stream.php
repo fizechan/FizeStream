@@ -3,8 +3,8 @@
 namespace fize\stream;
 
 use Exception;
-use RuntimeException;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 /**
  * 数据流
@@ -25,7 +25,7 @@ class Stream implements StreamInterface
     /**
      * @var resource 资源流上下文
      */
-    protected $context;
+    protected $stream;
 
     /**
      * @var int 流的数据大小
@@ -59,21 +59,17 @@ class Stream implements StreamInterface
 
     /**
      * 初始化
-     * @param resource $resource 资源流
-     * @param array    $options  附加选项
+     * @param resource $stream  资源流
+     * @param array    $options 附加选项
      */
-    public function __construct($resource, array $options = [])
+    public function __construct($stream = null, array $options = [])
     {
-        $this->context = $resource;
+        $this->stream = $stream;
         if (isset($options['size'])) {
             $this->size = $options['size'];
         }
         $this->customMetadata = $options['metadata'] ?? [];
-        $meta = $this->getMetaData();
-        $this->seekable = $meta['seekable'];
-        $this->readable = (bool)preg_match(self::READABLE_MODES, $meta['mode']);
-        $this->writable = (bool)preg_match(self::WRITABLE_MODES, $meta['mode']);
-        $this->uri = $this->getMetadata('uri');
+        $this->checkMetadata();
     }
 
     /**
@@ -99,13 +95,37 @@ class Stream implements StreamInterface
     }
 
     /**
+     * 打开流
+     * @param string      $file             文件路径
+     * @param string|null $mode             打开模式
+     * @param bool        $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource    $context          上下文支持
+     */
+    public function open(string $file, string $mode = null, bool $use_include_path = false, $context = null)
+    {
+        if ($this->stream) {
+            throw new RuntimeException('The original stream has not been closed');
+        }
+        if (strstr($file, '://') === false || substr($file, 0, 4) == 'file') {
+            if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
+                $dir = dirname($file);
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+            }
+        }
+        $this->stream = fopen($file, $mode, $use_include_path, $context);
+        $this->checkMetadata();
+    }
+
+    /**
      * 关闭流和任何底层资源
      */
     public function close()
     {
-        $context = $this->detach();
-        if ($context && is_resource($context) && get_resource_type($context) == 'stream') {
-            fclose($context);
+        $stream = $this->detach();
+        if ($stream && is_resource($stream) && get_resource_type($stream) == 'stream') {
+            fclose($stream);
         }
     }
 
@@ -117,16 +137,16 @@ class Stream implements StreamInterface
      */
     public function detach()
     {
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             return null;
         }
 
-        $context = $this->context;
-        unset($this->context);
+        $stream = $this->stream;
+        unset($this->stream);
         $this->size = $this->uri = null;
         $this->readable = $this->writable = $this->seekable = false;
 
-        return $context;
+        return $stream;
     }
 
     /**
@@ -141,7 +161,7 @@ class Stream implements StreamInterface
             return $this->size;
         }
 
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             return null;
         }
 
@@ -149,7 +169,7 @@ class Stream implements StreamInterface
             clearstatcache(true, $this->uri);
         }
 
-        $stats = fstat($this->context);
+        $stats = fstat($this->stream);
         if (isset($stats['size'])) {
             $this->size = $stats['size'];
             return $this->size;
@@ -164,11 +184,11 @@ class Stream implements StreamInterface
      */
     public function tell(): int
     {
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
 
-        $result = ftell($this->context);
+        $result = ftell($this->stream);
 
         if ($result === false) {
             throw new RuntimeException('Unable to determine stream position');
@@ -183,11 +203,11 @@ class Stream implements StreamInterface
      */
     public function eof(): bool
     {
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
 
-        return feof($this->context);
+        return feof($this->stream);
     }
 
     /**
@@ -206,13 +226,13 @@ class Stream implements StreamInterface
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->seekable) {
             throw new RuntimeException('Stream is not seekable');
         }
-        if (fseek($this->context, $offset, $whence) === -1) {
+        if (fseek($this->stream, $offset, $whence) === -1) {
             throw new RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . var_export($whence, true));
         }
     }
@@ -241,7 +261,7 @@ class Stream implements StreamInterface
      */
     public function write($string): int
     {
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->writable) {
@@ -249,7 +269,7 @@ class Stream implements StreamInterface
         }
 
         $this->size = null;  //数据大小无法得知
-        $result = fwrite($this->context, $string);
+        $result = fwrite($this->stream, $string);
 
         if ($result === false) {
             throw new RuntimeException('Unable to write to stream');
@@ -274,7 +294,7 @@ class Stream implements StreamInterface
      */
     public function read($length): string
     {
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
         if (!$this->readable) {
@@ -288,7 +308,7 @@ class Stream implements StreamInterface
             return '';
         }
 
-        $string = fread($this->context, $length);
+        $string = fread($this->stream, $length);
         if (false === $string) {
             throw new RuntimeException('Unable to read from stream');
         }
@@ -302,11 +322,11 @@ class Stream implements StreamInterface
      */
     public function getContents(): string
     {
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             throw new RuntimeException('Stream is detached');
         }
 
-        $contents = stream_get_contents($this->context);
+        $contents = stream_get_contents($this->stream);
 
         if ($contents === false) {
             throw new RuntimeException('Unable to read stream contents');
@@ -318,18 +338,18 @@ class Stream implements StreamInterface
     /**
      * 获取流中的元数据作为关联数组，或者检索指定的键
      * @param string|null $key 键名
-     * @return array|mixed|null
+     * @return mixed
      */
     public function getMetadata($key = null)
     {
-        if (!isset($this->context)) {
+        if (!isset($this->stream)) {
             return $key ? null : [];
         } elseif (!$key) {
-            return $this->customMetadata + stream_get_meta_data($this->context);
+            return $this->customMetadata + stream_get_meta_data($this->stream);
         } elseif (isset($this->customMetadata[$key])) {
             return $this->customMetadata[$key];
         }
-        $meta = stream_get_meta_data($this->context);
+        $meta = stream_get_meta_data($this->stream);
         return $meta[$key] ?? null;
     }
 
@@ -406,5 +426,20 @@ class Stream implements StreamInterface
     {
         $resource = fopen('php://temp', 'r+');
         return new static($resource, $options);
+    }
+
+    /**
+     * 检测META数据
+     */
+    protected function checkMetadata()
+    {
+        $meta = $this->getMetaData();
+        if (empty($meta)) {
+            return;
+        }
+        $this->seekable = $meta['seekable'];
+        $this->readable = (bool)preg_match(self::READABLE_MODES, $meta['mode']);
+        $this->writable = (bool)preg_match(self::WRITABLE_MODES, $meta['mode']);
+        $this->uri = $this->getMetadata('uri');
     }
 }

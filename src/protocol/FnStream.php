@@ -2,9 +2,9 @@
 
 namespace fize\stream\protocol;
 
+use fize\stream\StreamDecorator;
 use LogicException;
 use Psr\Http\Message\StreamInterface;
-use fize\stream\StreamDecorator;
 
 /**
  * 方法流
