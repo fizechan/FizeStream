@@ -1,8 +1,8 @@
 <?php
 
-namespace fize\stream;
+namespace Fize\Stream;
 
-use fize\stream\protocol\PumpStream;
+use Fize\Stream\Protocol\PumpStream;
 use InvalidArgumentException;
 use Iterator;
 use Psr\Http\Message\StreamFactoryInterface;

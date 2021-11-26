@@ -1,9 +1,9 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\FnStream;
-use fize\stream\Stream;
+use Fize\Stream\Protocol\FnStream;
+use Fize\Stream\Stream;
 use PHPUnit\Framework\TestCase;
 
 class TestFnStream extends TestCase

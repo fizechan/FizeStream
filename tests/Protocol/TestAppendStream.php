@@ -1,10 +1,10 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\AppendStream;
-use fize\stream\protocol\NoSeekStream;
-use fize\stream\StreamFactory;
+use Fize\Stream\Protocol\AppendStream;
+use Fize\Stream\Protocol\NoSeekStream;
+use Fize\Stream\StreamFactory;
 use PHPUnit\Framework\TestCase;
 
 class TestAppendStream extends TestCase

@@ -1,7 +1,10 @@
 <?php
 
-use fize\stream\Stream;
-use fize\stream\StreamFactory;
+namespace Tests;
+
+use Fize\Stream\Stream;
+use Fize\Stream\StreamFactory;
+use Iterator;
 use PHPUnit\Framework\TestCase;
 
 class TestStreamFactory extends TestCase

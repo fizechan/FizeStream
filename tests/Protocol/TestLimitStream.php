@@ -1,9 +1,9 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\LimitStream;
-use fize\stream\Stream;
+use Fize\Stream\Protocol\LimitStream;
+use Fize\Stream\Stream;
 use PHPUnit\Framework\TestCase;
 
 class TestLimitStream extends TestCase

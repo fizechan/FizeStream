@@ -1,8 +1,8 @@
 <?php
 
-namespace fize\stream\protocol;
+namespace Fize\Stream\Protocol;
 
-use fize\stream\StreamDecorator;
+use Fize\Stream\StreamDecorator;
 use Psr\Http\Message\StreamInterface;
 
 /**

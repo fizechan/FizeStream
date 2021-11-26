@@ -1,9 +1,9 @@
 <?php
 
-namespace fize\stream\protocol;
+namespace Fize\Stream\Protocol;
 
-use fize\stream\StreamDecorator;
-use fize\stream\StreamFactory;
+use Fize\Stream\StreamDecorator;
+use Fize\Stream\StreamFactory;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 

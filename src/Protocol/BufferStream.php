@@ -1,6 +1,6 @@
 <?php
 
-namespace fize\stream\protocol;
+namespace Fize\Stream\Protocol;
 
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;

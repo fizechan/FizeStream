@@ -1,6 +1,6 @@
 <?php
 
-namespace fize\stream;
+namespace Fize\Stream;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;

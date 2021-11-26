@@ -1,10 +1,10 @@
 <?php
 
-namespace fize\stream\protocol;
+namespace Fize\Stream\Protocol;
 
-use fize\stream\Stream;
-use fize\stream\StreamDecorator;
-use fize\stream\StreamWrapper;
+use Fize\Stream\Stream;
+use Fize\Stream\StreamDecorator;
+use Fize\Stream\StreamWrapper;
 use Psr\Http\Message\StreamInterface;
 
 /**

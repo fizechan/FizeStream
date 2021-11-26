@@ -1,6 +1,8 @@
 <?php
 
-use fize\stream\Stream;
+namespace Tests;
+
+use Fize\Stream\Stream;
 use PHPUnit\Framework\TestCase;
 
 class TestStream extends TestCase

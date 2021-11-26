@@ -1,9 +1,9 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\DroppingStream;
-use fize\stream\Stream;
+use Fize\Stream\Protocol\DroppingStream;
+use Fize\Stream\Stream;
 use PHPUnit\Framework\TestCase;
 
 class TestDroppingStream extends TestCase

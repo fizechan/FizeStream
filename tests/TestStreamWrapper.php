@@ -1,7 +1,9 @@
 <?php
 
-use fize\stream\Stream;
-use fize\stream\StreamWrapper;
+namespace Tests;
+
+use Fize\Stream\Stream;
+use Fize\Stream\StreamWrapper;
 use PHPUnit\Framework\TestCase;
 
 class TestStreamWrapper extends TestCase

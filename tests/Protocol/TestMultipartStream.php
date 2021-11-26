@@ -1,8 +1,8 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\MultipartStream;
+use Fize\Stream\Protocol\MultipartStream;
 use PHPUnit\Framework\TestCase;
 
 class TestMultipartStream extends TestCase

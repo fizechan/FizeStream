@@ -1,8 +1,8 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\LazyOpenStream;
+use Fize\Stream\Protocol\LazyOpenStream;
 use PHPUnit\Framework\TestCase;
 
 class TestLazyOpenStream extends TestCase

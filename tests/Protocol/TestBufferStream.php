@@ -1,8 +1,8 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\BufferStream;
+use Fize\Stream\Protocol\BufferStream;
 use PHPUnit\Framework\TestCase;
 
 class TestBufferStream extends TestCase

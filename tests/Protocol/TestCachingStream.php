@@ -1,11 +1,11 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\CachingStream;
-use fize\stream\protocol\LazyOpenStream;
-use fize\stream\protocol\PumpStream;
-use fize\stream\Stream;
+use Fize\Stream\Protocol\CachingStream;
+use Fize\Stream\Protocol\LazyOpenStream;
+use Fize\Stream\Protocol\PumpStream;
+use Fize\Stream\Stream;
 use PHPUnit\Framework\TestCase;
 
 class TestCachingStream extends TestCase

@@ -1,9 +1,9 @@
 <?php
 
-namespace protocol;
+namespace Tests\Protocol;
 
-use fize\stream\protocol\NoSeekStream;
-use fize\stream\Stream;
+use Fize\Stream\Protocol\NoSeekStream;
+use Fize\Stream\Stream;
 use PHPUnit\Framework\TestCase;
 
 class TestNoSeekStream extends TestCase
