@@ -75,7 +75,7 @@ class BufferStream implements StreamInterface
     /**
      * 返回当前读/写的指针位置
      */
-    public function tell()
+    public function tell(): int
     {
         throw new RuntimeException('Cannot determine the position of a BufferStream');
     }

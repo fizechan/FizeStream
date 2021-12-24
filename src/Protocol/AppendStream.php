@@ -199,7 +199,7 @@ class AppendStream implements StreamInterface
      * 向流中写数据
      * @param string $string 要写入流的数据
      */
-    public function write($string)
+    public function write($string): int
     {
         throw new RuntimeException('Cannot write to an AppendStream');
     }
