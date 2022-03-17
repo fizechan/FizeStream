@@ -158,8 +158,9 @@ class PumpStream implements StreamInterface
     /**
      * 向流中写数据
      * @param string $string 要写入流的数据
+     * @return int
      */
-    public function write($string)
+    public function write($string): int
     {
         throw new RuntimeException('Cannot write to a PumpStream');
     }
