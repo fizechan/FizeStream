@@ -123,9 +123,9 @@ class TestAppendStream extends TestCase
         self::assertTrue($seekable);
 
         $factory = new StreamFactory();
-        $str1 = '123';
+        $str1 = '0123';
         $stream1 = $factory->createStream($str1);
-        $str2 = '456';
+        $str2 = '0456';
         $stream2 = $factory->createStream($str2);
         $stream2 = new NoSeekStream($stream2);
         $stream = new AppendStream([$stream1, $stream2]);
