@@ -32,6 +32,14 @@ class TestStream extends TestCase
         self::assertIsString($string);
     }
 
+    public function testOpen()
+    {
+        $stream = new Stream();
+        $stream->open(__DIR__ . '/../temp/stream.txt', 'w+');
+        $stream->close();
+        self::assertTrue(true);
+    }
+
     public function testClose()
     {
         $stream = new Stream();
