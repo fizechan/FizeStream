@@ -79,10 +79,10 @@ class StreamFactory implements StreamFactoryInterface
         if ($object instanceof StreamInterface) {
             return $object;
         }
-        if (!method_exists($object, '__toString')) {
-            throw new InvalidArgumentException('Invalid resource type: ' . gettype($object));
+        if (method_exists($object, '__toString')) {
+            return $this->createStream((string)$object);
         }
-        return $this->createStream((string)$object);
+        throw new InvalidArgumentException('Invalid resource type: ' . gettype($object));
     }
 
     /**
