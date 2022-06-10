@@ -70,7 +70,7 @@ class TestPumpStream extends TestCase
     public function testGetSize()
     {
         $options = [
-            'size' => 9  //模拟size
+            'size' => 9  // 模拟size
         ];
         $once = true;
         $stream = new PumpStream(function ($length) use (&$once) {
@@ -88,13 +88,13 @@ class TestPumpStream extends TestCase
     public function testTell()
     {
         $options = [
-            'size' => 9  //模拟size
+            'size' => 9  // 模拟size
         ];
         $once = true;
         $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
             if (!$once) {
-                return null;  //模拟结束
+                return null;  // 模拟结束
             }
             $once = false;
             return '123456789';
@@ -112,7 +112,7 @@ class TestPumpStream extends TestCase
         $stream = new PumpStream(function ($length) use (&$once) {
             var_dump($length);
             if (!$once) {
-                return null;  //模拟结束
+                return null;  // 模拟结束
             }
             $once = false;
             return '123456789';
