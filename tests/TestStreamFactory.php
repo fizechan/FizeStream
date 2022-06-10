@@ -40,6 +40,11 @@ class TestStreamFactory extends TestCase
         self::assertTrue($readble);
         $content = $stream->getContents();
         var_dump($content);
+        $stream->close();
+        $stream = $factory->createStreamFromFile(__DIR__ . '/../temp/stream.txt', 'w');
+        $writable = $stream->isWritable();
+        self::assertTrue($writable);
+        $stream->close();
     }
 
     public function testCreateStreamFromResource()
