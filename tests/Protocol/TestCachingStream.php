@@ -16,6 +16,9 @@ class TestCachingStream extends TestCase
         $stream = new CachingStream(new LazyOpenStream('php://input', 'r+'));
         var_dump($stream);
         self::assertIsObject($stream);
+        $stream2 = new CachingStream(new LazyOpenStream('php://input', 'r+'), Stream::createTemp());
+        var_dump($stream2);
+        self::assertIsObject($stream2);
     }
 
     public function testClose()

@@ -119,6 +119,15 @@ class StreamWrapper
     }
 
     /**
+     * 关闭流
+     * @return void
+     */
+    public function stream_close()
+    {
+
+    }
+
+    /**
      * 读取
      * @param int $count 字节数
      * @return string

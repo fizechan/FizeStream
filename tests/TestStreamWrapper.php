@@ -27,6 +27,20 @@ class TestStreamWrapper extends TestCase
         self::assertIsResource($resource);
     }
 
+    public function test_stream_open()
+    {
+        $sw = new StreamWrapper();
+        $bool = $sw->stream_open(__DIR__ . '/../temp/stream3.txt', 'w+', STREAM_REPORT_ERRORS);
+        var_dump($bool);
+        self::assertTrue($bool);
+        $sw->stream_close();
+        $bool2 = $sw->stream_open(__DIR__ . '/../temp/stream3.txt', 'w+', STREAM_REPORT_ERRORS, $opened_path);
+        var_dump($bool2);
+        self::assertTrue($bool2);
+        var_dump($opened_path);
+        $sw->stream_close();
+    }
+
     public function testStream_open()
     {
         $stream = new Stream();

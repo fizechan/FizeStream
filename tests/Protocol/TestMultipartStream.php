@@ -20,6 +20,10 @@ class TestMultipartStream extends TestCase
                 'name'     => 'test2'
             ]
         ];
+        $stream1 = new MultipartStream($elements);
+        var_dump($stream1);
+        self::assertIsObject($stream1);
+        $stream1->close();
         $boundary = "\r\n\r\n";
         $stream = new MultipartStream($elements, $boundary);
         var_dump($stream);

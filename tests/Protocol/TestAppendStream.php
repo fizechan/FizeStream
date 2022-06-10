@@ -17,6 +17,9 @@ class TestAppendStream extends TestCase
         $stream1 = $factory->createStream($str1);
         $str2 = '456';
         $stream2 = $factory->createStream($str2);
+        $stream1 = new AppendStream();
+        var_dump($stream1);
+        self::assertIsObject($stream1);
         $stream = new AppendStream([$stream1, $stream2]);
         var_dump($stream);
         self::assertIsObject($stream);
