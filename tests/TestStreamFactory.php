@@ -96,6 +96,17 @@ class TestStreamFactory extends TestCase
         $content = $stream->getContents();
         var_dump($content);
         self::assertEquals('0123456789', $content);
+        $fired = false;
+        $stream2 = $factory->creatStreamFromCallable(function () use (&$fired){
+            if (!$fired) {
+                $fired = true;
+                return '0123456789';
+            }
+            return null;
+        }, ['size' => 1024]);
+        $content = $stream2->getContents();
+        var_dump($content);
+        self::assertEquals('0123456789', $content);
     }
 }
 

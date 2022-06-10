@@ -13,6 +13,16 @@ class TestStream extends TestCase
         $stream = new Stream();
         $stream->open(__DIR__ . '/../temp/stream.txt', 'w+');
         self::assertIsObject($stream);
+        $stream->close();
+        $stream2 = new Stream(fopen(__DIR__ . '/../temp/stream.txt', 'w+'));
+        self::assertIsObject($stream2);
+        $stream2->close();
+        $stream3 = new Stream(null, ['size' => 123]);
+        self::assertIsObject($stream3);
+        $stream3->close();
+        $stream4 = new Stream(fopen(__DIR__ . '/../temp/stream.txt', 'w+'), ['size' => 123]);
+        self::assertIsObject($stream4);
+        $stream4->close();
     }
 
     public function test__destruct()
