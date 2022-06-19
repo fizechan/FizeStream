@@ -433,7 +433,7 @@ class Stream implements StreamInterface
      */
     protected function checkMetadata()
     {
-        $meta = $this->getMetaData();
+        $meta = $this->getMetadata();
         if (empty($meta)) {
             return;
         }

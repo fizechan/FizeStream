@@ -86,7 +86,7 @@ class TestStreamFactory extends TestCase
     {
         $factory = new StreamFactory();
         $fired = false;
-        $stream = $factory->creatStreamFromCallable(function () use (&$fired){
+        $stream = $factory->creatStreamFromCallable(function () use (&$fired) {
             if (!$fired) {
                 $fired = true;
                 return '0123456789';
@@ -97,7 +97,7 @@ class TestStreamFactory extends TestCase
         var_dump($content);
         self::assertEquals('0123456789', $content);
         $fired = false;
-        $stream2 = $factory->creatStreamFromCallable(function () use (&$fired){
+        $stream2 = $factory->creatStreamFromCallable(function () use (&$fired) {
             if (!$fired) {
                 $fired = true;
                 return '0123456789';
@@ -115,9 +115,9 @@ class MyIterator implements Iterator
     private $position;
 
     private $array = [
-        "firstelement",
-        "secondelement",
-        "lastelement",
+        'firstelement',
+        'secondelement',
+        'lastelement',
     ];
 
     public function __construct()
