@@ -59,7 +59,7 @@ class FnStream extends StreamDecorator implements StreamInterface
      * 从头到尾将流中的所有数据读取到字符串
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return call_user_func($this->methods['__toString']);
     }

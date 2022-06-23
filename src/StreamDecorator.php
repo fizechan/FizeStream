@@ -18,7 +18,7 @@ abstract class StreamDecorator implements StreamInterface
      * 从头到尾将流中的所有数据读取到字符串
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->isSeekable()) {
             $this->seek(0);
@@ -38,7 +38,7 @@ abstract class StreamDecorator implements StreamInterface
      * 从流中分离任何底层资源
      *
      * 分离之后，流处于不可用状态。
-     * @return null
+     * @return resource|null
      */
     public function detach()
     {

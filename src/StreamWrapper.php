@@ -55,7 +55,7 @@ class StreamWrapper
     /**
      * 获取流资源
      * @param StreamInterface $stream 流对象
-     * @return resource 失败时返回false
+     * @return resource|false 失败时返回false
      */
     public static function getResource(StreamInterface $stream)
     {
