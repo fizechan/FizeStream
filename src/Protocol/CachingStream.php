@@ -70,7 +70,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * @param int $offset 要定位的流的偏移量
      * @param int $whence 指定如何根据偏移量计算光标位置
      */
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek(int $offset, int $whence = SEEK_SET)
     {
         if ($whence == SEEK_SET) {
             $byte = $offset;
@@ -103,7 +103,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * @param string $string 要写入流的数据
      * @return int 返回写入流的字节数
      */
-    public function write($string): int
+    public function write(string $string): int
     {
         $overflow = strlen($string) + $this->tell() - $this->remoteStream->tell();
         if ($overflow > 0) {
@@ -118,7 +118,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * @param int $length 最多读取 $length 字节的数据
      * @return string
      */
-    public function read($length): string
+    public function read(int $length): string
     {
         $data = $this->stream->read($length);
         $remaining = $length - strlen($data);

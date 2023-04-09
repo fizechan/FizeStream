@@ -134,7 +134,7 @@ class PumpStream implements StreamInterface
      * @param int $offset 要定位的流的偏移量
      * @param int $whence 指定如何根据偏移量计算光标位置
      */
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek(int $offset, int $whence = SEEK_SET)
     {
         throw new RuntimeException('Cannot seek a PumpStream');
     }
@@ -160,7 +160,7 @@ class PumpStream implements StreamInterface
      * @param string $string 要写入流的数据
      * @return int
      */
-    public function write($string): int
+    public function write(string $string): int
     {
         throw new RuntimeException('Cannot write to a PumpStream');
     }
@@ -179,7 +179,7 @@ class PumpStream implements StreamInterface
      * @param int $length 最多读取 $length 字节的数据
      * @return string
      */
-    public function read($length): string
+    public function read(int $length): string
     {
         $data = $this->buffer->read($length);
         $readLen = strlen($data);
@@ -213,7 +213,7 @@ class PumpStream implements StreamInterface
      * @param string|null $key 键名
      * @return array|mixed|null
      */
-    public function getMetadata($key = null)
+    public function getMetadata(?string $key = null)
     {
         if (!$key) {
             return $this->metadata;
