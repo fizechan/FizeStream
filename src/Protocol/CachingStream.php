@@ -39,7 +39,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
     /**
      * 关闭流和任何底层资源
      */
-    public function close()
+    public function close(): void
     {
         $this->remoteStream->close();
         $this->stream->close();
@@ -70,7 +70,7 @@ class CachingStream extends StreamDecorator implements StreamInterface
      * @param int $offset 要定位的流的偏移量
      * @param int $whence 指定如何根据偏移量计算光标位置
      */
-    public function seek(int $offset, int $whence = SEEK_SET)
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         if ($whence == SEEK_SET) {
             $byte = $offset;

@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Exception;
 use Fize\Stream\Stream;
 use Fize\Stream\StreamWrapper;
 use PHPUnit\Framework\TestCase;

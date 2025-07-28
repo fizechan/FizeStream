@@ -8,6 +8,7 @@
       "email": "chenfengzhan@qq.com"
     }
   ],
+  "version": "2.1.0",
   "autoload": {
     "psr-4": {
       "Fize\\Stream\\": "src"
@@ -15,8 +16,8 @@
   },
   "require": {
     "php": "^7.2.0",
-    "psr/http-factory": "^1.0.0",
-    "psr/http-message": "^1.0.0"
+    "psr/http-factory": "*",
+    "psr/http-message": "*"
   },
   "autoload-dev": {
     "psr-4": {
@@ -24,6 +25,7 @@
     }
   },
   "require-dev": {
+    "fize/io": "*",
     "phpunit/phpunit": "^9.5.0"
   }
 }

@@ -75,7 +75,7 @@ class LimitStream extends StreamDecorator implements StreamInterface
      * @param int $offset 偏移量
      * @param int $whence 偏移参照
      */
-    public function seek(int $offset, int $whence = SEEK_SET)
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         if ($whence !== SEEK_SET || $offset < 0) {
             throw new RuntimeException(sprintf('Cannot seek to offset %s with whence %s', $offset, $whence));

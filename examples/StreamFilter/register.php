@@ -2,7 +2,6 @@
 require_once "../../vendor/autoload.php";
 
 use Fize\IO\FileF;
-use Fize\Stream\Stream;
 use Fize\Stream\StreamFilter;
 
 /**
@@ -30,8 +29,7 @@ var_dump($rst);
 $fp = fopen('../temp/testStreamFilterRegister.txt', 'w+');
 StreamFilter::append($fp, "strtoupper");
 
-$stream = new Stream($fp);
-$fp2 = $stream->getStream();
+$fp2 = $fp;
 StreamFilter::append($fp2, "strtoupper");
 $fp = new FileF($fp2);
 $fp->write("Line1\n");

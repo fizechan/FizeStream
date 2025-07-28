@@ -65,7 +65,7 @@ class AppendStream implements StreamInterface
     /**
      * 关闭流和任何底层资源
      */
-    public function close()
+    public function close(): void
     {
         $this->pos = $this->current = 0;
         $this->seekable = true;
@@ -152,7 +152,7 @@ class AppendStream implements StreamInterface
      * @param int $offset 要定位的流的偏移量
      * @param int $whence 指定如何根据偏移量计算光标位置
      */
-    public function seek(int $offset, int $whence = SEEK_SET)
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         if (!$this->seekable) {
             throw new RuntimeException('This AppendStream is not seekable');
@@ -182,7 +182,7 @@ class AppendStream implements StreamInterface
     /**
      * 定位流的起始位置
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->seek(0);
     }
@@ -267,7 +267,7 @@ class AppendStream implements StreamInterface
      * @param string|null $key 键名
      * @return array|null
      */
-    public function getMetadata(?string $key = null)
+    public function getMetadata(?string $key = null): ?array
     {
         return $key ? null : [];
     }

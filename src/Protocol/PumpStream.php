@@ -73,7 +73,7 @@ class PumpStream implements StreamInterface
     /**
      * 关闭流和任何底层资源
      */
-    public function close()
+    public function close(): void
     {
         $this->detach();
     }
@@ -134,7 +134,7 @@ class PumpStream implements StreamInterface
      * @param int $offset 要定位的流的偏移量
      * @param int $whence 指定如何根据偏移量计算光标位置
      */
-    public function seek(int $offset, int $whence = SEEK_SET)
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         throw new RuntimeException('Cannot seek a PumpStream');
     }
@@ -142,7 +142,7 @@ class PumpStream implements StreamInterface
     /**
      * 定位流的起始位置
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->seek(0);
     }

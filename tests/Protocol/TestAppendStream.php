@@ -15,6 +15,7 @@ class TestAppendStream extends TestCase
         $factory = new StreamFactory();
         $str1 = '123';
         $stream1 = $factory->createStream($str1);
+        var_dump($stream1);
         $str2 = '456';
         $stream2 = $factory->createStream($str2);
         $stream1 = new AppendStream();

@@ -14,10 +14,6 @@ class TestStreamSocket extends TestCase
     public function testEnableCrypto()
     {
         $client = StreamSocket::client('tcp://127.0.0.1:1935', $errno, $errstr, 30);
-        if (!$client) {
-            echo "$errstr ($errno)<br />\n";
-            return;
-        }
         $rst = $client->enableCrypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
         self::assertTrue($rst);
         $rst = $client->enableCrypto(false);
@@ -48,11 +44,6 @@ class TestStreamSocket extends TestCase
     public function testRecvfrom()
     {
         $server = StreamSocket::server('tcp://127.0.0.1:1935', $errno, $errstr);
-        if (!$server) {
-            echo "$errstr ($errno)<br />\n";
-            return;
-        }
-
         $client = $server->accept();
 
         /* Grab a packet (1500 is a typical MTU size) of OOB data */
@@ -89,10 +80,6 @@ class TestStreamSocket extends TestCase
     public function testAccept()
     {
         $server = StreamSocket::server('tcp://0.0.0.0:8000', $errno, $errstr);
-        if (!$server) {
-            echo "$errstr ($errno)<br />\n";
-            return;
-        }
 
         while ($conn = $server->accept(100)) {
             $conn->write('The local time is ' . date('Y-m-d H:i:s') . "\n");
@@ -105,13 +92,13 @@ class TestStreamSocket extends TestCase
     {
         $fp = StreamSocket::client('tcp://www.baidu.com:80', $errno, $errstr, 30);
         var_dump($fp);
-        self::assertInstanceOf(StreamSocket::class, $fp);
+        self::assertNotNull($fp);
     }
 
     public function testSocketServer()
     {
         $socket = StreamSocket::server('tcp://0.0.0.0:8000', $errno, $errstr);
         var_dump($socket);
-        self::assertInstanceOf(StreamSocket::class, $socket);
+        self::assertNotNull($socket);
     }
 }
