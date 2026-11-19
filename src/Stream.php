@@ -101,7 +101,7 @@ class Stream implements StreamInterface
      * @param bool        $use_include_path 是否在 include_path 中搜寻文件
      * @param resource    $context          上下文支持
      */
-    public function open(string $file, string $mode = null, bool $use_include_path = false, $context = null)
+    public function open(string $file, ?string $mode = null, bool $use_include_path = false, $context = null)
     {
         if ($this->stream) {
             throw new RuntimeException('The original stream has not been closed');
